@@ -1,0 +1,35 @@
+# ===================================================================
+# FERREYROS SERVTECH 2026 - .gitignore OFICIAL
+# ===================================================================
+
+# --- Compilados Backend / Java / Maven ---
+backend/target/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# --- Dependencias y Builds Frontend / Node / Vite ---
+frontend/node_modules/
+**/node_modules/
+frontend/dist/
+**/dist/
+.npm
+*.log
+
+# --- Variables de Entorno y Secretos ---
+.env
+.env.*
+!.env.example
+
+# --- Archivos de IDE y Sistema Operativo ---
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.DS_Store
+Thumbs.db
