@@ -1,12 +1,12 @@
-# Rama: feature/vue-vite-setup
+# Rama: feature/pinia-auth-store
 - **Integrante:** Andy Manchego (Frontend)
-- **Requerimiento:** Arquitectura SPA Vue 3 + Vite + Tailwind CSS
-- **Descripción:** Configuración inicial del frontend, cliente Axios centralizado, diseño base Caterpillar y plantilla unificada AppLayout.vue.
+- **Requerimiento:** RF-01 Login Seguro y Estado Global Pinia
+- **Descripción:** Módulo de autenticación con Pinia Store (auth.js), enrutador Vue Router con Navigation Guard y LoginView.vue.
 
 ### Comandos Git para commit:
 ```bash
-git checkout -b feature/vue-vite-setup
+git checkout -b feature/pinia-auth-store
 git add .
-git commit -m "feat(frontend): setup de Vue 3, Vite, Tailwind CSS y plantilla corporativa unificada"
-git push -u origin feature/vue-vite-setup
+git commit -m "feat(auth): store de Pinia, navegacion protegida y vista de Login corporativo"
+git push -u origin feature/pinia-auth-store
 ```
