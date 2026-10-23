@@ -194,6 +194,7 @@ const ordenesDisponibles = ref([])
 const alertaGist = ref(null)
 const showModal = ref(false)
 const guardando = ref(false)
+const fechaFiltro = ref('')
 
 const slotsHorarios = [
   { id: 's1', inicio: '07:00', fin: '09:00', label: '07:00 - 09:00' },
@@ -228,9 +229,10 @@ const cargarDatos = async () => {
 const obtenerAsignacion = (idTecnico, slot) => {
   return asignaciones.value.find(a => {
     if (a.tecnico?.idTecnico !== idTecnico) return false
-    if (!a.fechaInicio) return false
+    const fecha = a.fechaInicio || a.fechaHoraInicio
+    if (!fecha) return false
 
-    const d = new Date(a.fechaInicio)
+    const d = new Date(fecha)
     if (fechaFiltro.value) {
       const fechaAsignacion = d.toISOString().split('T')[0]
       if (fechaAsignacion !== fechaFiltro.value) return false
