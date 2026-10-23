@@ -106,7 +106,8 @@ public class AsignacionService {
         ordenServicioRepository.save(orden);
 
         // Actualizamos estado del técnico
-        tecnico.setEstadoOperativo("ASIGNADO");
+        tecnico.setEstadoDisponibilidad("EN_SERVICIO");
+        tecnico.setEstadoOperativo("EN_SERVICIO");
         tecnicoRepository.save(tecnico);
 
         // Bitácora Inmutable (RF-14)

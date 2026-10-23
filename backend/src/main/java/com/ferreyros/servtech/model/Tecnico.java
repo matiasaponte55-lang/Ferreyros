@@ -96,7 +96,11 @@ public class Tecnico {
     public String getEstadoOperativo() { return estadoOperativo; }
     public void setEstadoOperativo(String estadoOperativo) {
         this.estadoOperativo = estadoOperativo;
-        this.estadoDisponibilidad = estadoOperativo;
+        if ("ASIGNADO".equalsIgnoreCase(estadoOperativo)) {
+            this.estadoDisponibilidad = "EN_SERVICIO";
+        } else {
+            this.estadoDisponibilidad = estadoOperativo;
+        }
     }
 
     public BigDecimal getHorasAcumuladasMes() { return horasAcumuladasMes; }
