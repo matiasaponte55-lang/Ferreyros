@@ -1,12 +1,12 @@
-# Rama: feature/rest-controllers-ot
+# Rama: feature/dispatcher-assignment-logic
 - **Integrante:** Ivan Mamani (Backend)
-- **Requerimiento:** RF-02, RF-05, RF-06, RF-12 Controladores REST para OTs y Catálogo
-- **Descripción:** Endpoints RESTful para la gestión de órdenes de trabajo, catálogo de maquinaria pesada, métricas de dashboard y manejo global de excepciones.
+- **Requerimiento:** RF-04 Asignación Horaria y Control de Solapamientos
+- **Descripción:** Lógica de negocio para asignación de cuadrillas 14x7, captura de conflicto de exclusión GiST (PostgreSQL 23P01) y respuesta HTTP 409 Conflict.
 
 ### Comandos Git para commit:
 ```bash
-git checkout -b feature/rest-controllers-ot
+git checkout -b feature/dispatcher-assignment-logic
 git add .
-git commit -m "feat(api): controladores REST para ordenes de servicio, maquinarias y metricas de dashboard"
-git push -u origin feature/rest-controllers-ot
+git commit -m "feat(dispatcher): logica de asignacion horaria y captura de excepcion GiST anti-solapamiento"
+git push -u origin feature/dispatcher-assignment-logic
 ```
