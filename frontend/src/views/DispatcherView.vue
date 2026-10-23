@@ -98,12 +98,12 @@
                   class="bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border-l-4 border-[#FFCD11] p-2.5 rounded shadow text-white hover:border-yellow-400 transition">
                   <div class="flex justify-between items-start">
                     <span class="font-mono font-black text-[#FFCD11] text-xs">
-                      {{ obtenerAsignacion(tecnico.idTecnico, slot).ordenServicio?.codigoOt || 'OT-2026' }}
+                      {{ (obtenerAsignacion(tecnico.idTecnico, slot).orden?.codigoOt || obtenerAsignacion(tecnico.idTecnico, slot).ordenServicio?.codigoOt || 'OT-2026') }}
                     </span>
                     <span class="text-[10px] bg-yellow-500/30 text-yellow-300 px-1 rounded font-bold">Líder</span>
                   </div>
                   <div class="text-xs font-semibold text-gray-200 mt-1 truncate">
-                    {{ obtenerAsignacion(tecnico.idTecnico, slot).ordenServicio?.maquinaria?.codigoFlota || 'CAT-Flota' }}
+                    {{ (obtenerAsignacion(tecnico.idTecnico, slot).orden?.maquinaria?.codigoFlota || obtenerAsignacion(tecnico.idTecnico, slot).ordenServicio?.maquinaria?.codigoFlota || 'CAT-Flota') }}
                   </div>
                   <div class="text-[10px] text-gray-400 mt-1 font-mono">
                     {{ slot.label }}
