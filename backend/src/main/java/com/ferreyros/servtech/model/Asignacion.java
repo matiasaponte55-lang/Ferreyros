@@ -25,19 +25,19 @@ public class Asignacion {
     @JoinColumn(name = "id_tecnico", referencedColumnName = "id_tecnico", nullable = false)
     private Tecnico tecnico;
 
-    @Column(name = "fecha_inicio", nullable = false)
+    @Column(name = "fecha_hora_inicio")
     private OffsetDateTime fechaInicio;
 
-    @Column(name = "fecha_fin", nullable = false)
+    @Column(name = "fecha_hora_fin")
     private OffsetDateTime fechaFin;
 
-    @Column(name = "es_lider", nullable = false)
+    @Column(name = "es_lider")
     private Boolean esLider = false;
 
     @Column(name = "estado_asignacion", nullable = false, length = 20)
     private String estadoAsignacion = "PROGRAMADA"; // PROGRAMADA, EN_EJECUCION, COMPLETADA, CANCELADA
 
-    @Column(name = "creado_en")
+    @Column(name = "fecha_asignacion")
     private OffsetDateTime creadoEn = OffsetDateTime.now();
 
     public Asignacion() {}
