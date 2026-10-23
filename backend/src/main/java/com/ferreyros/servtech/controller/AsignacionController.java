@@ -29,13 +29,13 @@ public class AsignacionController {
     }
 
     @GetMapping("/orden/{idOrden}")
-    public ResponseEntity<List<Asignacion>> listarPorOrden(@PathVariable Integer idOrden) {
+    public ResponseEntity<List<Asignacion>> listarPorOrden(@PathVariable("idOrden") Integer idOrden) {
         List<Asignacion> lista = asignacionService.listarPorOrden(idOrden);
         return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/tecnico/{idTecnico}")
-    public ResponseEntity<List<Asignacion>> listarPorTecnico(@PathVariable Integer idTecnico) {
+    public ResponseEntity<List<Asignacion>> listarPorTecnico(@PathVariable("idTecnico") Integer idTecnico) {
         List<Asignacion> lista = asignacionService.listarPorTecnico(idTecnico);
         return ResponseEntity.ok(lista);
     }

@@ -22,8 +22,8 @@ public class TecnicoController {
 
     @GetMapping
     public ResponseEntity<List<Tecnico>> listarTodos(
-            @RequestParam(required = false) String certificacion,
-            @RequestParam(required = false) String turno
+            @RequestParam(value = "certificacion", required = false) String certificacion,
+            @RequestParam(value = "turno", required = false) String turno
     ) {
         List<Tecnico> lista = tecnicoService.listarTodos(certificacion, turno);
         return ResponseEntity.ok(lista);
@@ -36,15 +36,15 @@ public class TecnicoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tecnico> obtenerPorId(@PathVariable Integer id) {
+    public ResponseEntity<Tecnico> obtenerPorId(@PathVariable("id") Integer id) {
         Tecnico t = tecnicoService.obtenerPorId(id);
         return ResponseEntity.ok(t);
     }
 
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Tecnico> cambiarEstado(
-            @PathVariable Integer id,
-            @RequestParam(required = false) String nuevoEstado,
+            @PathVariable("id") Integer id,
+            @RequestParam(value = "nuevoEstado", required = false) String nuevoEstado,
             @RequestBody(required = false) Map<String, String> body
     ) {
         String estado = (nuevoEstado != null && !nuevoEstado.isEmpty()) 

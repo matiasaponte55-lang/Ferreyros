@@ -24,23 +24,23 @@ public class OrdenServicioController {
 
     @GetMapping
     public ResponseEntity<List<OrdenServicio>> listar(
-            @RequestParam(required = false) String estado,
-            @RequestParam(required = false) Integer idSede,
-            @RequestParam(required = false) String prioridad,
-            @RequestParam(required = false) String buscar
+            @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "idSede", required = false) Integer idSede,
+            @RequestParam(value = "prioridad", required = false) String prioridad,
+            @RequestParam(value = "buscar", required = false) String buscar
     ) {
         List<OrdenServicio> ordenes = ordenServicioService.listarOrdenes(estado, idSede, prioridad, buscar);
         return ResponseEntity.ok(ordenes);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrdenServicio> obtenerPorId(@PathVariable Integer id) {
+    public ResponseEntity<OrdenServicio> obtenerPorId(@PathVariable("id") Integer id) {
         OrdenServicio orden = ordenServicioService.obtenerPorId(id);
         return ResponseEntity.ok(orden);
     }
 
     @GetMapping("/maquinaria/{idMaquinaria}")
-    public ResponseEntity<List<OrdenServicio>> listarPorMaquinaria(@PathVariable Integer idMaquinaria) {
+    public ResponseEntity<List<OrdenServicio>> listarPorMaquinaria(@PathVariable("idMaquinaria") Integer idMaquinaria) {
         List<OrdenServicio> ordenes = ordenServicioService.listarPorMaquinaria(idMaquinaria);
         return ResponseEntity.ok(ordenes);
     }
@@ -53,11 +53,11 @@ public class OrdenServicioController {
 
     @PatchMapping("/{id}/estado")
     public ResponseEntity<OrdenServicio> actualizarEstado(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestBody(required = false) ActualizarEstadoOtRequest request,
-            @RequestParam(required = false) String nuevoEstado,
-            @RequestParam(required = false) String comentario,
-            @RequestParam(required = false) String motivoRetrabajo
+            @RequestParam(value = "nuevoEstado", required = false) String nuevoEstado,
+            @RequestParam(value = "comentario", required = false) String comentario,
+            @RequestParam(value = "motivoRetrabajo", required = false) String motivoRetrabajo
     ) {
         if (request == null) {
             request = new ActualizarEstadoOtRequest();

@@ -26,13 +26,13 @@ public class InspeccionController {
     private InspeccionService inspeccionService;
 
     @GetMapping("/orden/{idOrden}")
-    public ResponseEntity<ChecklistInspeccion> obtenerPorOrden(@PathVariable Integer idOrden) {
+    public ResponseEntity<ChecklistInspeccion> obtenerPorOrden(@PathVariable("idOrden") Integer idOrden) {
         ChecklistInspeccion ch = inspeccionService.obtenerPorOrden(idOrden);
         return ResponseEntity.ok(ch);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ChecklistInspeccion> obtenerPorId(@PathVariable Integer id) {
+    public ResponseEntity<ChecklistInspeccion> obtenerPorId(@PathVariable("id") Integer id) {
         ChecklistInspeccion ch = inspeccionService.obtenerPorId(id);
         return ResponseEntity.ok(ch);
     }
@@ -45,7 +45,7 @@ public class InspeccionController {
 
     @PostMapping("/{idOrden}/firmar")
     public ResponseEntity<ChecklistInspeccion> firmarInspeccion(
-            @PathVariable Integer idOrden,
+            @PathVariable("idOrden") Integer idOrden,
             @RequestBody FirmaRequest request
     ) {
         ChecklistInspeccion firmada = inspeccionService.firmarInspeccion(idOrden, request);
@@ -54,7 +54,7 @@ public class InspeccionController {
 
     @PostMapping("/{id}/evidencias")
     public ResponseEntity<Map<String, Object>> subirEvidencia(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestParam("archivo") MultipartFile archivo,
             @RequestParam(value = "descripcion", required = false) String descripcion
     ) {

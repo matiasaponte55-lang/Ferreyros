@@ -52,7 +52,7 @@ public class CatalogoController {
     }
 
     @GetMapping("/auditoria/{idOrden}")
-    public ResponseEntity<List<AuditoriaEstadoOt>> listarAuditoriaPorOrden(@PathVariable Integer idOrden) {
+    public ResponseEntity<List<AuditoriaEstadoOt>> listarAuditoriaPorOrden(@PathVariable("idOrden") Integer idOrden) {
         return ResponseEntity.ok(auditoriaRepository.findByOrden_IdOrdenOrderByFechaCambioDesc(idOrden));
     }
 

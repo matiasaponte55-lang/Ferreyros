@@ -22,16 +22,16 @@ public class MaquinariaController {
 
     @GetMapping
     public ResponseEntity<List<Maquinaria>> listarTodas(
-            @RequestParam(required = false) String familia,
-            @RequestParam(required = false) String estado,
-            @RequestParam(required = false) String buscar
+            @RequestParam(value = "familia", required = false) String familia,
+            @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "buscar", required = false) String buscar
     ) {
         List<Maquinaria> lista = maquinariaService.listarTodas(familia, estado, buscar);
         return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Maquinaria> obtenerPorId(@PathVariable Integer id) {
+    public ResponseEntity<Maquinaria> obtenerPorId(@PathVariable("id") Integer id) {
         Maquinaria m = maquinariaService.obtenerPorId(id);
         return ResponseEntity.ok(m);
     }
