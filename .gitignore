@@ -33,3 +33,6 @@ frontend/dist/
 *.sln
 .DS_Store
 Thumbs.db
+
+.metals/
+*.metals

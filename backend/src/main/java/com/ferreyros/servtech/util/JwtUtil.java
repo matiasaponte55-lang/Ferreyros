@@ -18,14 +18,17 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    @Value("${servtech.jwt.secret:9ed9a55d48489dd7ad52cd25FerreyrosServTech2026SecretKeyCATMasterSecurityTokenKey994K797F}")
+    @Value("${servtech.jwt.secret}")
     private String jwtSecret;
 
     @Value("${servtech.jwt.expiration:86400000}")
     private long jwtExpirationMs;
 
     private Key getSigningKey() {
-        byte[] keyBytes = this.jwtSecret.getBytes(StandardCharsets.UTF_8);
+        String secret = (this.jwtSecret != null && !this.jwtSecret.trim().isEmpty())
+                ? this.jwtSecret
+                : "FerreyrosServTech2026SecureKeyWithMin256BitsLengthForHmacSha256Security";
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

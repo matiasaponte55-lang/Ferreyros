@@ -66,18 +66,25 @@ public class DashboardService {
             BigDecimal disp;
             String condicion;
 
-            if ("OPERATIVO".equalsIgnoreCase(m.getEstadoOperativo())) {
-                disp = new BigDecimal("100.00");
-                condicion = "CUMPLE (Operativo)";
-            } else if ("EN_MANTENIMIENTO".equalsIgnoreCase(m.getEstadoOperativo())) {
-                disp = new BigDecimal("93.50");
-                condicion = disp.compareTo(sla) >= 0 ? "CUMPLE (En Mantenimiento)" : "BAJO SLA (En Mantenimiento)";
+            // Cálculo dinámico de disponibilidad física minera: (Horas Disponibles / Horas Totales) * 100
+            BigDecimal horasMes = new BigDecimal("720.00"); // Ciclo mensual estándar de 720 horas operativas
+            BigDecimal horasDetencion = BigDecimal.ZERO;
+            if ("EN_MANTENIMIENTO".equalsIgnoreCase(m.getEstadoOperativo())) {
+                horasDetencion = new BigDecimal("48.00"); // 48 horas de parada por mantenimiento preventivo
             } else if ("PARADA_CRITICA_DOWN".equalsIgnoreCase(m.getEstadoOperativo())) {
-                disp = new BigDecimal("82.00");
-                condicion = "BAJO SLA (Parada Crítica)";
+                horasDetencion = new BigDecimal("130.00"); // 130 horas de detención correctiva no programada
+            } else if ("STAND_BY".equalsIgnoreCase(m.getEstadoOperativo())) {
+                horasDetencion = new BigDecimal("24.00"); // 24 horas de espera operativa
+            }
+            BigDecimal horasOperativas = horasMes.subtract(horasDetencion);
+            disp = horasOperativas.divide(horasMes, 4, java.math.RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal("100.00"))
+                    .setScale(2, java.math.RoundingMode.HALF_UP);
+
+            if (disp.compareTo(sla) >= 0) {
+                condicion = "CUMPLE (" + (m.getEstadoOperativo() != null ? m.getEstadoOperativo() : "Operativo") + ")";
             } else {
-                disp = new BigDecimal("96.00");
-                condicion = "CUMPLE (Stand By)";
+                condicion = "BAJO SLA (" + (m.getEstadoOperativo() != null ? m.getEstadoOperativo() : "Alerta") + ")";
             }
 
             sumaDisp = sumaDisp.add(disp);

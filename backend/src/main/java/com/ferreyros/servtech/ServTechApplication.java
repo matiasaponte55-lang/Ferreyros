@@ -1,0 +1,23 @@
+package com.ferreyros.servtech;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * ===================================================================
+ * SISTEMA WEB SERVTECH 2026 - FERREYROS S.A.
+ * Clase principal que arranca el servidor backend Spring Boot 3.
+ * ===================================================================
+ */
+@SpringBootApplication
+public class ServTechApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ServTechApplication.class, args);
+        System.out.println("=================================================");
+        System.out.println(" Ferreyros ServTech 2026 - Backend Iniciado OK   ");
+        System.out.println(" Puerto: http://localhost:8080                   ");
+        System.out.println(" Conectado a PostgreSQL (Supabase Cloud)         ");
+        System.out.println("=================================================");
+    }
+}

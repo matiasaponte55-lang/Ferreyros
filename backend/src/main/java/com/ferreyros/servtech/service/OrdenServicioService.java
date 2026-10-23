@@ -127,7 +127,8 @@ public class OrdenServicioService {
         if (prioridad == null || prioridad.isEmpty()) prioridad = "MEDIA";
         if (prioridad.contains("CRITICA")) prioridad = "CRITICA_DOWN_MACHINE";
 
-        int aleatorio = 1000 + new Random().nextInt(9000);
+        java.security.SecureRandom secureRandom = new java.security.SecureRandom();
+        int aleatorio = 1000 + secureRandom.nextInt(9000);
         String codigoOt = "OT-2026-AQP-" + String.format("%05d", aleatorio);
 
         OrdenServicio orden = new OrdenServicio();

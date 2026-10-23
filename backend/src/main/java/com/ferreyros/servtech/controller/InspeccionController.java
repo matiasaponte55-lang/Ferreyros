@@ -59,11 +59,28 @@ public class InspeccionController {
             @RequestParam(value = "descripcion", required = false) String descripcion
     ) {
         Map<String, Object> resp = new HashMap<>();
-        resp.put("idEvidencia", System.currentTimeMillis());
-        resp.put("nombreArchivo", archivo.getOriginalFilename());
-        resp.put("pesoMb", (double) archivo.getSize() / (1024 * 1024));
-        resp.put("urlStorage", "https://supabase.co/storage/v1/object/public/evidencias/" + archivo.getOriginalFilename());
-        resp.put("mensaje", "Evidencia fotográfica subida satisfactoriamente");
-        return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+        try {
+            String uploadDir = "uploads/evidencias";
+            java.nio.file.Path rutaDirectorio = java.nio.file.Paths.get(uploadDir);
+            if (!java.nio.file.Files.exists(rutaDirectorio)) {
+                java.nio.file.Files.createDirectories(rutaDirectorio);
+            }
+
+            String nombreOriginal = archivo.getOriginalFilename() != null ? archivo.getOriginalFilename() : "evidencia.jpg";
+            String nombreFinal = System.currentTimeMillis() + "_" + nombreOriginal.replaceAll("[^a-zA-Z0-9.-]", "_");
+            java.nio.file.Path rutaArchivo = rutaDirectorio.resolve(nombreFinal);
+            java.nio.file.Files.copy(archivo.getInputStream(), rutaArchivo, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+            resp.put("idEvidencia", System.currentTimeMillis());
+            resp.put("nombreArchivo", nombreFinal);
+            resp.put("rutaAlmacenamiento", rutaArchivo.toAbsolutePath().toString());
+            resp.put("pesoMb", (double) archivo.getSize() / (1024 * 1024));
+            resp.put("urlStorage", "/api/v1/evidencias/" + nombreFinal);
+            resp.put("mensaje", "Evidencia fotográfica persistida satisfactoriamente");
+            return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+        } catch (Exception e) {
+            resp.put("error", "Error al persistir evidencia fotográfica: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp);
+        }
     }
 }
