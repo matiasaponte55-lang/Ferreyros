@@ -110,7 +110,6 @@ git commit -m "feat(modulo): descripcion clara del cambio"
 git push -u origin feature/nombre-de-la-rama
 ```
 
-
 ---
 
 ## 🚀 Guía Rápida de Ejecución Local
@@ -122,7 +121,7 @@ Cualquier integrante del equipo que clone o descargue el repositorio puede levan
 * **Node.js 18 o superior** (
 ode -v)
 
-> **Nota de Base de Datos:** No requiere instalar ni configurar PostgreSQL local. El backend ya se encuentra enlazado y configurado automáticamente contra el clúster de **Supabase Cloud (PostgreSQL 15)** con todas las tablas, restricciones GiST y técnicos precargados.
+> **Nota de Base de Datos:** No requiere instalar ni configurar PostgreSQL local. El backend ya se encuentra enlazado y configurado automáticamente contra el clúster de **Supabase Cloud (PostgreSQL 15)** con todas las tablas, restricciones GiST y personal técnico registrado.
 
 ---
 
@@ -150,14 +149,3 @@ npm install
 npm run dev
 `
 *La aplicación web estará disponible en http://localhost:5173.*
-
----
-
-### 4. Credenciales Oficiales de Prueba (Supabase)
-
-| Rol Operativo | Usuario / Correo | Contraseña | Nombre |
-| :--- | :--- | :--- | :--- |
-| **Administrador** | ivan.mamani@ferreyros.com.pe | Ferreyros12 | Iván Mamani |
-| **Planificador** | maponte@ferreyros.com.pe | password | Matías Aponte |
-| **Supervisor** | jzamata@ferreyros.com.pe | password | Juan Zamata |
-| **Técnico CAT** | manchego@ferreyros.com.pe | password | Andy Manchego |
