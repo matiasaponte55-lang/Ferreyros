@@ -148,8 +148,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import api from '../api/client'
 
+const authStore = useAuthStore()
 const ordenes = ref([])
 const otParaRetrabajo = ref(null)
 const motivoRetrabajo = ref('')

@@ -162,10 +162,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 import api from '../api/client'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 
 const maquinarias = ref([])
 const maquinariaSeleccionadaId = ref(null)
@@ -243,7 +245,8 @@ const guardarOrden = async () => {
       tipoMantenimiento: form.value.tipoMantenimiento,
       prioridad: form.value.prioridad,
       fallaReportada: form.value.fallaReportada,
-      idSede: maquinariaActual.value.sedeActual?.idSede || 11
+      idSede: maquinariaActual.value.sedeActual?.idSede || 1,
+      creadoPorUsername: authStore.user?.username
     })
 
     mensajeExito.value = `Se aperturó la orden de trabajo ${res.data.codigoOt} exitosamente. Redirigiendo a la matriz de despacho...`

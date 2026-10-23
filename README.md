@@ -109,3 +109,55 @@ git commit -m "feat(modulo): descripcion clara del cambio"
 # 4. Subir la rama a GitHub
 git push -u origin feature/nombre-de-la-rama
 ```
+
+
+---
+
+## 🚀 Guía Rápida de Ejecución Local
+
+Cualquier integrante del equipo que clone o descargue el repositorio puede levantar el proyecto completo en 2 pasos:
+
+### 1. Requisitos Previos
+* **Java 17 o superior** (java -version)
+* **Node.js 18 o superior** (
+ode -v)
+
+> **Nota de Base de Datos:** No requiere instalar ni configurar PostgreSQL local. El backend ya se encuentra enlazado y configurado automáticamente contra el clúster de **Supabase Cloud (PostgreSQL 15)** con todas las tablas, restricciones GiST y técnicos precargados.
+
+---
+
+### 2. Iniciar el Backend (Spring Boot 3)
+
+`ash
+cd backend
+
+# En Windows:
+.\mvnw.cmd spring-boot:run
+
+# En Linux / macOS:
+./mvnw spring-boot:run
+`
+*El servicio REST iniciará en http://localhost:8080.*
+
+---
+
+### 3. Iniciar el Frontend (Vue 3 + Vite)
+
+En una terminal independiente:
+`ash
+cd frontend
+npm install
+npm run dev
+`
+*La aplicación web estará disponible en http://localhost:5173.*
+
+---
+
+### 4. Credenciales Oficiales de Prueba (Supabase)
+
+| Rol Operativo | Usuario / Correo | Contraseña | Nombre |
+| :--- | :--- | :--- | :--- |
+| **Administrador** | ivan.mamani@ferreyros.com.pe | Ferreyros12 | Iván Mamani |
+| **Planificador** | maponte@ferreyros.com.pe | password | Matías Aponte |
+| **Supervisor** | jzamata@ferreyros.com.pe | password | Juan Zamata |
+| **Técnico CAT** | manchego@ferreyros.com.pe | password | Andy Manchego |
