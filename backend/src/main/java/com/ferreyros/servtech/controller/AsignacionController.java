@@ -4,6 +4,7 @@ import com.ferreyros.servtech.dto.AsignacionRequest;
 import com.ferreyros.servtech.model.Asignacion;
 import com.ferreyros.servtech.service.AsignacionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,7 @@ public class AsignacionController {
     }
 
     @PostMapping
-    public ResponseEntity<Asignacion> asignar(@RequestBody AsignacionRequest request) {
+    public ResponseEntity<Asignacion> asignar(@Valid @RequestBody AsignacionRequest request) {
         Asignacion asignacion = asignacionService.asignarCuadrilla(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(asignacion);
     }

@@ -5,6 +5,7 @@ import com.ferreyros.servtech.dto.NuevaOrdenRequest;
 import com.ferreyros.servtech.model.OrdenServicio;
 import com.ferreyros.servtech.service.OrdenServicioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class OrdenServicioController {
     }
 
     @PostMapping
-    public ResponseEntity<OrdenServicio> crearOrden(@RequestBody NuevaOrdenRequest request) {
+    public ResponseEntity<OrdenServicio> crearOrden(@Valid @RequestBody NuevaOrdenRequest request) {
         OrdenServicio creada = ordenServicioService.crearOrden(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(creada);
     }

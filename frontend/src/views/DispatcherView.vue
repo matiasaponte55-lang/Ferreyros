@@ -135,6 +135,11 @@
           <button @click="showModal = false" class="text-gray-400 hover:text-white">✕</button>
         </h2>
 
+        <div v-if="errorModal" class="mb-4 bg-red-900/40 border border-red-500 text-red-200 text-xs p-3 rounded-lg flex items-center space-x-2">
+          <span>⚠️</span>
+          <span>{{ errorModal }}</span>
+        </div>
+
         <form @submit.prevent="guardarAsignacion" class="space-y-4 text-xs sm:text-sm">
           <div>
             <label class="block font-semibold text-gray-300 mb-1">Orden de Trabajo (OT)</label>
@@ -194,6 +199,7 @@ const ordenesDisponibles = ref([])
 const alertaGist = ref(null)
 const showModal = ref(false)
 const guardando = ref(false)
+const errorModal = ref('')
 const fechaFiltro = ref('')
 
 const slotsHorarios = [
@@ -247,6 +253,7 @@ const obtenerAsignacion = (idTecnico, slot) => {
 }
 
 const abrirModalAsignacion = (tecnico, slot) => {
+  errorModal.value = ''
   formAsignar.value.idTecnico = tecnico ? tecnico.idTecnico : (tecnicos.value[0]?.idTecnico || null)
   formAsignar.value.idOrden = ordenesDisponibles.value[0]?.idOrden || null
   if (slot) {
@@ -258,11 +265,34 @@ const abrirModalAsignacion = (tecnico, slot) => {
 
 const guardarAsignacion = async () => {
   alertaGist.value = null
+  errorModal.value = ''
+
+  if (!formAsignar.value.idOrden || Number(formAsignar.value.idOrden) <= 0) {
+    errorModal.value = 'Validación de Orden: Debe seleccionar una Orden de Trabajo válida.'
+    return
+  }
+
+  if (!formAsignar.value.idTecnico || Number(formAsignar.value.idTecnico) <= 0) {
+    errorModal.value = 'Validación de Técnico: Debe seleccionar un Técnico Especialista responsable.'
+    return
+  }
+
+  const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/
+  if (!timeRegex.test(formAsignar.value.horaInicio) || !timeRegex.test(formAsignar.value.horaFin)) {
+    errorModal.value = 'Validación de Formato: Las horas deben tener el formato exacto HH:mm (ej: 08:30, 14:00).'
+    return
+  }
+
+  if (formAsignar.value.horaInicio >= formAsignar.value.horaFin) {
+    errorModal.value = `Validación Cronológica: La hora de inicio (${formAsignar.value.horaInicio}) no puede ser igual o posterior a la hora de fin (${formAsignar.value.horaFin}).`
+    return
+  }
+
   guardando.value = true
   try {
     await api.post('/asignaciones', {
-      idOrden: formAsignar.value.idOrden,
-      idTecnico: formAsignar.value.idTecnico,
+      idOrden: Number(formAsignar.value.idOrden),
+      idTecnico: Number(formAsignar.value.idTecnico),
       horaInicio: formAsignar.value.horaInicio,
       horaFin: formAsignar.value.horaFin
     })

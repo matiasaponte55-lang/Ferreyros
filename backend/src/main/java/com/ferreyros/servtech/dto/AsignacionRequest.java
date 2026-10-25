@@ -1,13 +1,23 @@
 package com.ferreyros.servtech.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public class AsignacionRequest {
+
+    @NotNull(message = "El ID de la orden de trabajo es obligatorio.")
+    @Positive(message = "El ID de la orden debe ser un número positivo.")
     private Integer idOrden;
+
+    @NotNull(message = "El ID del técnico responsable es obligatorio.")
+    @Positive(message = "El ID del técnico debe ser un número positivo.")
     private Integer idTecnico;
+
     private String horaInicio;
     private String horaFin;
     private String fechaHoraInicio;
     private String fechaHoraFin;
-    private Boolean esLider = false;
+    private Boolean esLider;
 
     public AsignacionRequest() {}
 

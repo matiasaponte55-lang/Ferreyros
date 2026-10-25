@@ -14,7 +14,7 @@
     <div v-if="errorHorometro" class="bg-red-900/40 border border-red-500 text-red-200 text-xs sm:text-sm p-4 rounded-xl flex items-center space-x-3 shadow-lg animate-pulse">
       <span class="text-2xl">⚠️</span>
       <div>
-        <p class="font-extrabold">ERROR DE INTEGRIDAD EN HORÓMETRO (RF-03):</p>
+        <p class="font-extrabold">VALIDACIÓN DE DATOS (REGLA DE NEGOCIO):</p>
         <p>{{ errorHorometro }}</p>
       </div>
     </div>
@@ -83,7 +83,9 @@
               v-model.number="form.horometroRegistro" 
               type="number" 
               step="0.1" 
-              required
+              min="0.1" 
+              required 
+              @keydown="bloquearLetras"
               placeholder="Debe ser mayor o igual al actual"
               class="w-full bg-[#1F2937] border border-yellow-500/50 rounded-lg px-3 py-2.5 text-base font-mono font-bold text-white focus:outline-none focus:border-[#FFCD11]"
             />
@@ -218,21 +220,43 @@ const cargarMaquinarias = async () => {
   }
 }
 
+const bloquearLetras = (e) => {
+  // Impide ingresar símbolos de exponente o signos no numéricos en input number
+  if (['e', 'E', '+', '-'].includes(e.key)) {
+    e.preventDefault()
+  }
+}
+
 const guardarOrden = async () => {
   errorHorometro.value = ''
   mensajeExito.value = ''
 
   if (!maquinariaActual.value) {
-    alert('Seleccione una maquinaria')
+    errorHorometro.value = 'Validación: Debe seleccionar una maquinaria pesada de la flota.'
+    return
+  }
+
+  const rawHoro = form.value.horometroRegistro
+  if (rawHoro === null || rawHoro === undefined || rawHoro === '' || isNaN(Number(rawHoro))) {
+    errorHorometro.value = 'Validación Numérica: El horómetro debe ser un número puro válido. No se permiten letras ni caracteres especiales.'
+    return
+  }
+
+  const horoNuevo = Number(rawHoro)
+  if (horoNuevo <= 0) {
+    errorHorometro.value = 'Validación de Rango: El horómetro debe ser un número positivo mayor a 0 (ej: 250.5 hrs).'
     return
   }
 
   // VALIDACIÓN PERIMETRAL EN EL CLIENTE (Pantalla 5 / RF-03)
   const horoActual = Number(maquinariaActual.value.horometroAcumulado || 0)
-  const horoNuevo = Number(form.value.horometroRegistro || 0)
-
   if (horoNuevo < horoActual) {
-    errorHorometro.value = `El horómetro reportado (${horoNuevo} hrs) no puede ser inferior al acumulado histórico verificado (${horoActual} hrs). Verifique la lectura en la cabina del equipo.`
+    errorHorometro.value = `Validación Ascendente (RF-03): El horómetro reportado (${horoNuevo.toFixed(1)} hrs) no puede ser inferior al acumulado histórico verificado (${horoActual.toFixed(1)} hrs). Verifique la lectura en la cabina del equipo.`
+    return
+  }
+
+  if (!form.value.fallaReportada || form.value.fallaReportada.trim().length < 5) {
+    errorHorometro.value = 'Validación de Descripción: Debe ingresar el detalle de la falla o requerimiento con al menos 5 caracteres explicativos.'
     return
   }
 
