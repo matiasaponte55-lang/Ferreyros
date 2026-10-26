@@ -94,4 +94,46 @@ Ferreyros-Proyecto/
 
 ---
 
+## Cómo Ejecutar el Proyecto (Paso a Paso)
 
+### Requisitos Previos
+* **Java JDK 17** o superior instalado.
+* **Node.js 18** o superior (con npm) instalado.
+* *Nota: No es necesario instalar PostgreSQL ni Maven de forma local. El backend ya incluye Maven Wrapper (`mvnw`) y se conecta automáticamente a la base de datos PostgreSQL alojada en Supabase Cloud.*
+
+---
+
+### Paso 1: Iniciar el Backend (Spring Boot 3)
+Abre una terminal en la raíz del proyecto y ejecuta:
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+*(En Windows PowerShell usa `.\mvnw.cmd spring-boot:run`)*.
+
+El backend iniciará en el puerto **`http://localhost:8080`**.
+
+---
+
+### Paso 2: Iniciar el Frontend (Vue 3 / Vite)
+Abre una segunda terminal y ejecuta:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+El frontend iniciará en **`http://localhost:5173`**.
+
+---
+
+### Cuentas Corporativas para Pruebas (RBAC)
+
+Accede a [http://localhost:5173](http://localhost:5173) con cualquiera de estos usuarios:
+
+| Rol | Correo Corporativo | Contraseña |
+| :--- | :--- | :--- |
+| **Supervisor de Despacho** | `supervisor@ferreyros.com.pe` | `Ferreyros2026!` |
+| **Planificador MARC** | `planificador@ferreyros.com.pe` | `Ferreyros2026!` |
+| **Técnico Mecánico** | `tecnico@ferreyros.com.pe` | `Ferreyros2026!` |
+| **Administrador** | `admin@ferreyros.com.pe` | `Ferreyros2026!` |
