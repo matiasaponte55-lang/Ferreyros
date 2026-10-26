@@ -1,0 +1,272 @@
+openapi: 3.0.3
+info:
+  title: Ferreyros ServTech 2026 - API de Gestión Técnica y Despacho Operativo
+  description: >
+    Especificación técnica OpenAPI 3.0 para la plataforma de servicios mecánicos pesados Caterpillar (Ferreyros S.A.).
+    Cubre el flujo de órdenes de trabajo (OT), validaciones de horómetro ascendente (RF-03), matriz de asignación
+    horaria con exclusión matemática GiST (RF-04), inspección digital ATS con firma SHA-256 (RF-09) y auditoría (RF-14).
+  version: 1.0.0
+  contact:
+    name: Juan Zamata (Área de Calidad y Arquitectura de Software)
+    email: jzamata@ferreyros.com.pe
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Servidor Local de Desarrollo
+  - url: https://servtech.ferreyros.com.pe/api/v1
+    description: Servidor de Producción CRC La Joya
+
+paths:
+  /auth/login:
+    post:
+      summary: Autenticación Corporativa y Emisión de Token JWT
+      description: Valida credenciales contra PostgreSQL mediante hash BCrypt y genera token HMAC-SHA256 con rol RBAC.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Autenticación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Parámetros inválidos
+        '401':
+          description: Credenciales incorrectas
+
+  /ordenes-servicio:
+    get:
+      summary: Listar Órdenes de Trabajo con Filtros Avanzados
+      parameters:
+        - name: estado
+          in: query
+          schema:
+            type: string
+        - name: idSede
+          in: query
+          schema:
+            type: integer
+        - name: prioridad
+          in: query
+          schema:
+            type: string
+        - name: buscar
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de órdenes de trabajo encontradas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrdenServicio'
+    post:
+      summary: Apertura y Tipificación de Orden de Trabajo (RF-02 / RF-03)
+      description: Registra una nueva OT validando que el horómetro sea estrictamente ascendente respecto al histórico.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NuevaOrdenRequest'
+      responses:
+        '201':
+          description: Orden de trabajo creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdenServicio'
+        '400':
+          description: Error de validación de horómetro o campos numéricos incompatibles
+
+  /ordenes-servicio/{id}/estado:
+    patch:
+      summary: Transición de Ciclo de Vida en Tablero Kanban (RF-06 / RF-07 / RF-14)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActualizarEstadoOtRequest'
+      responses:
+        '200':
+          description: Estado actualizado y registrado en auditoría inmutable
+        '400':
+          description: Transición inválida o justificación de retrabajo menor a 10 caracteres
+
+  /asignaciones:
+    get:
+      summary: Listar todas las asignaciones horarias
+      responses:
+        '200':
+          description: Lista de asignaciones
+    post:
+      summary: Asignar Cuadrilla Técnica con Regla GiST Anti-Solapamiento (CU-03 / RF-04)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AsignacionRequest'
+      responses:
+        '201':
+          description: Asignación creada exitosamente
+        '409':
+          description: Error 23P01 - Técnico ocupado en la franja seleccionada (Conflicto GiST)
+
+  /inspecciones/{id}/firmar:
+    post:
+      summary: Sellar Inspección Técnica Digital y ATS con Hash SHA-256 (RF-08 / RF-09)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FirmarInspeccionRequest'
+      responses:
+        '200':
+          description: Expediente técnico sellado con firma digital
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: supervisor@ferreyros.com.pe
+        password:
+          type: string
+          example: Ferreyros2026!
+        rol:
+          type: string
+          example: ROLE_SUPERVISOR
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        rol:
+          type: string
+        expiracion:
+          type: integer
+        user:
+          type: object
+
+    NuevaOrdenRequest:
+      type: object
+      required: [idMaquinaria, horometroRegistro, tipoMantenimiento, prioridad, fallaReportada]
+      properties:
+        idMaquinaria:
+          type: integer
+          example: 1
+        numeroSeriePin:
+          type: string
+          example: CAT797F-MIN01
+        horometroRegistro:
+          type: number
+          format: double
+          example: 1285.5
+        tipoMantenimiento:
+          type: string
+          example: PM2_500H
+        prioridad:
+          type: string
+          example: CRITICA_DOWN_MACHINE
+        fallaReportada:
+          type: string
+          minLength: 5
+          example: Falla en bomba hidráulica principal de levante
+
+    ActualizarEstadoOtRequest:
+      type: object
+      required: [nuevoEstado]
+      properties:
+        nuevoEstado:
+          type: string
+          example: EN_REPARACION
+        motivoRetrabajo:
+          type: string
+          example: RETRABAJO QC: Ajuste de torque insuficiente en pernos de corona
+        cambiadoPor:
+          type: string
+          example: supervisor@ferreyros.com.pe
+
+    AsignacionRequest:
+      type: object
+      required: [idOrden, idTecnico]
+      properties:
+        idOrden:
+          type: integer
+          example: 1
+        idTecnico:
+          type: integer
+          example: 2
+        horaInicio:
+          type: string
+          example: "09:00"
+        horaFin:
+          type: string
+          example: "11:00"
+        esLider:
+          type: boolean
+          example: true
+
+    FirmarInspeccionRequest:
+      type: object
+      required: [firmaBase64, hashSha256, lotoVerificado, petarAprobado]
+      properties:
+        firmaBase64:
+          type: string
+        hashSha256:
+          type: string
+          example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        lotoVerificado:
+          type: boolean
+        petarAprobado:
+          type: boolean
+
+    OrdenServicio:
+      type: object
+      properties:
+        idOrden:
+          type: integer
+        codigoOt:
+          type: string
+        estado:
+          type: string
+        horometroRegistro:
+          type: number
+        fallaReportada:
+          type: string
+        tipoMantenimiento:
+          type: string
+        prioridad:
+          type: string
