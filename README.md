@@ -124,16 +124,3 @@ npm run dev
 ```
 
 El frontend iniciará en **`http://localhost:5173`**.
-
----
-
-### Cuentas Corporativas para Pruebas (RBAC)
-
-Accede a [http://localhost:5173](http://localhost:5173) con cualquiera de estos usuarios:
-
-| Rol | Correo Corporativo | Contraseña |
-| :--- | :--- | :--- |
-| **Supervisor de Despacho** | `supervisor@ferreyros.com.pe` | `Ferreyros2026!` |
-| **Planificador MARC** | `planificador@ferreyros.com.pe` | `Ferreyros2026!` |
-| **Técnico Mecánico** | `tecnico@ferreyros.com.pe` | `Ferreyros2026!` |
-| **Administrador** | `admin@ferreyros.com.pe` | `Ferreyros2026!` |
