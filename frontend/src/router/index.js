@@ -2,18 +2,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
-import LoginView from '../views/LoginView.vue'
-import CatalogoView from '../views/CatalogoView.vue'
-import FichaMaquinariaView from '../views/FichaMaquinariaView.vue'
-import CuadrillasView from '../views/CuadrillasView.vue'
-import NuevaOrdenView from '../views/NuevaOrdenView.vue'
-import OrdenesView from '../views/OrdenesView.vue'
-import DispatcherView from '../views/DispatcherView.vue'
-import KanbanView from '../views/KanbanView.vue'
-import InspeccionView from '../views/InspeccionView.vue'
-import LiquidacionView from '../views/LiquidacionView.vue'
-import DashboardView from '../views/DashboardView.vue'
-import AuditoriaView from '../views/AuditoriaView.vue'
+// Carga Perezosa (Lazy Loading / Code Splitting) para acelerar la carga inicial
+const LoginView = () => import('../views/LoginView.vue')
+const CatalogoView = () => import('../views/CatalogoView.vue')
+const FichaMaquinariaView = () => import('../views/FichaMaquinariaView.vue')
+const CuadrillasView = () => import('../views/CuadrillasView.vue')
+const NuevaOrdenView = () => import('../views/NuevaOrdenView.vue')
+const OrdenesView = () => import('../views/OrdenesView.vue')
+const DispatcherView = () => import('../views/DispatcherView.vue')
+const KanbanView = () => import('../views/KanbanView.vue')
+const InspeccionView = () => import('../views/InspeccionView.vue')
+const LiquidacionView = () => import('../views/LiquidacionView.vue')
+const DashboardView = () => import('../views/DashboardView.vue')
+const AuditoriaView = () => import('../views/AuditoriaView.vue')
 
 const routes = [
   { path: '/', redirect: '/login' },

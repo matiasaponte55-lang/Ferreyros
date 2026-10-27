@@ -8,6 +8,7 @@ import com.ferreyros.servtech.repository.MaquinariaRepository;
 import com.ferreyros.servtech.repository.OrdenServicioRepository;
 import com.ferreyros.servtech.repository.TecnicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,11 +16,11 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Servicio de Inteligencia Operativa y KPIs Dinámicos de Mantenimiento MARC (RF-11 / RF-12).
- * Todos los indicadores se calculan en tiempo real en función de las órdenes,
- * asignaciones y flota física registradas en PostgreSQL (Supabase).
+ * Optimizado con ejecución asíncrona concurrente (CompletableFuture) y caché en memoria.
  */
 @Service
 public class DashboardService {
@@ -36,18 +37,73 @@ public class DashboardService {
     @Autowired
     private TecnicoRepository tecnicoRepository;
 
+    @Cacheable(value = "dashboardMetricas")
     public DashboardMetricasDto obtenerMetricas() {
         DashboardMetricasDto dto = new DashboardMetricasDto();
 
-        List<Maquinaria> flotas = maquinariaRepository.findAll();
-        List<OrdenServicio> ordenes = ordenServicioRepository.findAll();
+        // Ejecución concurrente en paralelo de las 5 consultas independientes contra la BD
+        CompletableFuture<List<Maquinaria>> futureFlotas = CompletableFuture.supplyAsync(
+                () -> maquinariaRepository.findAllConRelaciones()
+        );
 
-        long solicitadas = ordenes.stream().filter(o -> "SOLICITADA".equalsIgnoreCase(o.getEstado())).count();
-        long asignadas = ordenes.stream().filter(o -> "ASIGNADA".equalsIgnoreCase(o.getEstado()) || "PROGRAMADA".equalsIgnoreCase(o.getEstado())).count();
-        long diagnostico = ordenes.stream().filter(o -> "EN_DIAGNOSTICO".equalsIgnoreCase(o.getEstado())).count();
-        long reparacion = ordenes.stream().filter(o -> "EN_REPARACION".equalsIgnoreCase(o.getEstado())).count();
-        long qc = ordenes.stream().filter(o -> "CONTROL_CALIDAD".equalsIgnoreCase(o.getEstado())).count();
-        long cerradas = ordenes.stream().filter(o -> "CERRADA".equalsIgnoreCase(o.getEstado()) || "LIQUIDADA".equalsIgnoreCase(o.getEstado())).count();
+        CompletableFuture<List<Object[]>> futureConteos = CompletableFuture.supplyAsync(
+                () -> ordenServicioRepository.contarPorEstado()
+        );
+
+        CompletableFuture<List<OrdenServicio>> futureCerradas = CompletableFuture.supplyAsync(
+                () -> ordenServicioRepository.findOrdenesCerradasConFechas()
+        );
+
+        CompletableFuture<Long> futureTotalTecnicos = CompletableFuture.supplyAsync(
+                () -> tecnicoRepository.count()
+        );
+
+        CompletableFuture<Long> futureAsignaciones = CompletableFuture.supplyAsync(
+                () -> asignacionRepository.count()
+        );
+
+        // Espera paralela
+        CompletableFuture.allOf(
+                futureFlotas,
+                futureConteos,
+                futureCerradas,
+                futureTotalTecnicos,
+                futureAsignaciones
+        ).join();
+
+        List<Maquinaria> flotas = futureFlotas.join();
+        List<Object[]> conteos = futureConteos.join();
+        List<OrdenServicio> ordenesCerradas = futureCerradas.join();
+        long totalTecnicos = futureTotalTecnicos.join();
+        long asignacionesActivas = futureAsignaciones.join();
+
+        // 1. Conteo de órdenes agrupadas por estado
+        long solicitadas = 0;
+        long asignadas = 0;
+        long diagnostico = 0;
+        long reparacion = 0;
+        long qc = 0;
+        long cerradas = 0;
+
+        for (Object[] fila : conteos) {
+            String estado = (String) fila[0];
+            long cantidad = fila[1] != null ? ((Number) fila[1]).longValue() : 0L;
+            if (estado == null) continue;
+
+            if ("SOLICITADA".equalsIgnoreCase(estado)) {
+                solicitadas += cantidad;
+            } else if ("ASIGNADA".equalsIgnoreCase(estado) || "PROGRAMADA".equalsIgnoreCase(estado)) {
+                asignadas += cantidad;
+            } else if ("EN_DIAGNOSTICO".equalsIgnoreCase(estado)) {
+                diagnostico += cantidad;
+            } else if ("EN_REPARACION".equalsIgnoreCase(estado)) {
+                reparacion += cantidad;
+            } else if ("CONTROL_CALIDAD".equalsIgnoreCase(estado)) {
+                qc += cantidad;
+            } else if ("CERRADA".equalsIgnoreCase(estado) || "LIQUIDADA".equalsIgnoreCase(estado)) {
+                cerradas += cantidad;
+            }
+        }
 
         dto.setOtsSolicitadas(solicitadas);
         dto.setOtsAsignadas(asignadas);
@@ -57,7 +113,7 @@ public class DashboardService {
         dto.setOtsCerradas(cerradas);
         dto.setTotalOtsActivas(solicitadas + asignadas + diagnostico + reparacion + qc);
 
-        // 1. Disponibilidad MARC Promedio (calculada sobre flota real)
+        // 2. Disponibilidad MARC Promedio (calculada sobre flota real cargada)
         BigDecimal sumaDisp = BigDecimal.ZERO;
         List<DashboardMetricasDto.FlotaEstadoDto> listaFlota = new ArrayList<>();
 
@@ -67,19 +123,19 @@ public class DashboardService {
             String condicion;
 
             // Cálculo dinámico de disponibilidad física minera: (Horas Disponibles / Horas Totales) * 100
-            BigDecimal horasMes = new BigDecimal("720.00"); // Ciclo mensual estándar de 720 horas operativas
+            BigDecimal horasMes = new BigDecimal("720.00");
             BigDecimal horasDetencion = BigDecimal.ZERO;
             if ("EN_MANTENIMIENTO".equalsIgnoreCase(m.getEstadoOperativo())) {
-                horasDetencion = new BigDecimal("48.00"); // 48 horas de parada por mantenimiento preventivo
+                horasDetencion = new BigDecimal("48.00");
             } else if ("PARADA_CRITICA_DOWN".equalsIgnoreCase(m.getEstadoOperativo())) {
-                horasDetencion = new BigDecimal("130.00"); // 130 horas de detención correctiva no programada
+                horasDetencion = new BigDecimal("130.00");
             } else if ("STAND_BY".equalsIgnoreCase(m.getEstadoOperativo())) {
-                horasDetencion = new BigDecimal("24.00"); // 24 horas de espera operativa
+                horasDetencion = new BigDecimal("24.00");
             }
             BigDecimal horasOperativas = horasMes.subtract(horasDetencion);
-            disp = horasOperativas.divide(horasMes, 4, java.math.RoundingMode.HALF_UP)
+            disp = horasOperativas.divide(horasMes, 4, RoundingMode.HALF_UP)
                     .multiply(new BigDecimal("100.00"))
-                    .setScale(2, java.math.RoundingMode.HALF_UP);
+                    .setScale(2, RoundingMode.HALF_UP);
 
             if (disp.compareTo(sla) >= 0) {
                 condicion = "CUMPLE (" + (m.getEstadoOperativo() != null ? m.getEstadoOperativo() : "Operativo") + ")";
@@ -109,11 +165,7 @@ public class DashboardService {
         dto.setDisponibilidadMarcPromedio(dispPromedio);
         dto.setFlotas(listaFlota);
 
-        // 2. MTTR Promedio (Tiempo Medio de Reparación de OTs concluidas)
-        List<OrdenServicio> ordenesCerradas = ordenes.stream()
-                .filter(o -> o.getCerradoEn() != null && o.getCreadoEn() != null)
-                .toList();
-
+        // 3. MTTR Promedio (Tiempo Medio de Reparación solo de OTs concluidas)
         if (ordenesCerradas.isEmpty()) {
             dto.setMttrPromedioHoras(BigDecimal.ZERO);
             dto.setHorasFacturables(0L);
@@ -128,10 +180,7 @@ public class DashboardService {
             dto.setHorasFacturables((long) Math.round(totalHoras));
         }
 
-        // 3. Ocupación de Cuadrillas 14x7 (Asignaciones activas sobre técnicos totales)
-        long totalTecnicos = tecnicoRepository.count();
-        long asignacionesActivas = asignacionRepository.count();
-
+        // 4. Ocupación de Cuadrillas 14x7
         if (totalTecnicos == 0 || asignacionesActivas == 0) {
             dto.setOcupacionCuadrillas(BigDecimal.ZERO);
         } else {

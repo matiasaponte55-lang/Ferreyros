@@ -4,6 +4,7 @@ import com.ferreyros.servtech.exception.RecursoNoEncontradoException;
 import com.ferreyros.servtech.model.Maquinaria;
 import com.ferreyros.servtech.repository.MaquinariaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -17,7 +18,7 @@ public class MaquinariaService {
     private MaquinariaRepository maquinariaRepository;
 
     public List<Maquinaria> listarTodas(String familia, String estado, String buscar) {
-        List<Maquinaria> lista = maquinariaRepository.findAll();
+        List<Maquinaria> lista = maquinariaRepository.findAllConRelaciones();
 
         return lista.stream()
                 .filter(m -> familia == null || familia.isEmpty() || "Todas".equalsIgnoreCase(familia) ||
@@ -37,15 +38,16 @@ public class MaquinariaService {
     }
 
     public Maquinaria obtenerPorId(Integer id) {
-        return maquinariaRepository.findById(id)
+        return maquinariaRepository.findByIdConRelaciones(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Maquinaria no encontrada con ID: " + id));
     }
 
     public Maquinaria obtenerPorPin(String pin) {
-        return maquinariaRepository.findByNumeroSeriePin(pin)
+        return maquinariaRepository.findByNumeroSeriePinConRelaciones(pin)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Maquinaria no encontrada con serie PIN: " + pin));
     }
 
+    @CacheEvict(value = "dashboardMetricas", allEntries = true)
     public Maquinaria guardar(Maquinaria maquinaria) {
         if (maquinaria.getCreadoEn() == null) {
             maquinaria.setCreadoEn(OffsetDateTime.now());

@@ -7,12 +7,12 @@ import com.ferreyros.servtech.exception.RecursoNoEncontradoException;
 import com.ferreyros.servtech.model.*;
 import com.ferreyros.servtech.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +34,7 @@ public class OrdenServicioService {
     private AuditoriaEstadoOtRepository auditoriaRepository;
 
     public List<OrdenServicio> listarOrdenes(String estado, Integer idSede, String prioridad, String buscar) {
-        List<OrdenServicio> lista = ordenServicioRepository.findAllByOrderByCreadoEnDesc();
+        List<OrdenServicio> lista = ordenServicioRepository.findAllConRelaciones();
 
         return lista.stream()
                 .filter(o -> estado == null || estado.isEmpty() || "Todas".equalsIgnoreCase(estado) ||
@@ -55,12 +55,12 @@ public class OrdenServicioService {
     }
 
     public OrdenServicio obtenerPorId(Integer id) {
-        return ordenServicioRepository.findById(id)
+        return ordenServicioRepository.findByIdConRelaciones(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Orden de trabajo no encontrada con ID: " + id));
     }
 
     public List<OrdenServicio> listarPorMaquinaria(Integer idMaquinaria) {
-        return ordenServicioRepository.findByMaquinaria_IdMaquinaria(idMaquinaria);
+        return ordenServicioRepository.findByMaquinariaConRelaciones(idMaquinaria);
     }
 
     /**
@@ -68,6 +68,7 @@ public class OrdenServicioService {
      * Valida la regla ascendente del horómetro y actualiza automáticamente el acumulado.
      */
     @Transactional
+    @CacheEvict(value = "dashboardMetricas", allEntries = true)
     public OrdenServicio crearOrden(NuevaOrdenRequest request) {
         Maquinaria maquinaria;
         if (request.getIdMaquinaria() != null) {
@@ -165,6 +166,7 @@ public class OrdenServicioService {
      * Transición controlada de ciclo de vida de la OT (RF-06, RF-11, RF-14).
      */
     @Transactional
+    @CacheEvict(value = "dashboardMetricas", allEntries = true)
     public OrdenServicio actualizarEstado(Integer idOrden, ActualizarEstadoOtRequest request) {
         OrdenServicio orden = obtenerPorId(idOrden);
         String estadoAnterior = orden.getEstado();

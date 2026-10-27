@@ -2,6 +2,8 @@ package com.ferreyros.servtech.repository;
 
 import com.ferreyros.servtech.model.Maquinaria;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,4 +16,13 @@ public interface MaquinariaRepository extends JpaRepository<Maquinaria, Integer>
     List<Maquinaria> findByEstadoOperativo(String estadoOperativo);
     List<Maquinaria> findBySedeActual_IdSede(Integer idSede);
     List<Maquinaria> findByModelo_Familia(String familia);
+
+    @Query("SELECT DISTINCT m FROM Maquinaria m LEFT JOIN FETCH m.modelo LEFT JOIN FETCH m.sedeActual LEFT JOIN FETCH m.cliente")
+    List<Maquinaria> findAllConRelaciones();
+
+    @Query("SELECT m FROM Maquinaria m LEFT JOIN FETCH m.modelo LEFT JOIN FETCH m.sedeActual LEFT JOIN FETCH m.cliente WHERE m.idMaquinaria = :id")
+    Optional<Maquinaria> findByIdConRelaciones(@Param("id") Integer id);
+
+    @Query("SELECT m FROM Maquinaria m LEFT JOIN FETCH m.modelo LEFT JOIN FETCH m.sedeActual LEFT JOIN FETCH m.cliente WHERE m.numeroSeriePin = :pin")
+    Optional<Maquinaria> findByNumeroSeriePinConRelaciones(@Param("pin") String pin);
 }

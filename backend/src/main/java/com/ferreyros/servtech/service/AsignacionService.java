@@ -6,6 +6,7 @@ import com.ferreyros.servtech.exception.RecursoNoEncontradoException;
 import com.ferreyros.servtech.model.*;
 import com.ferreyros.servtech.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +43,11 @@ public class AsignacionService {
     }
 
     public List<Asignacion> listarPorOrden(Integer idOrden) {
-        return asignacionRepository.findByOrden_IdOrden(idOrden);
+        return asignacionRepository.findByOrdenConRelaciones(idOrden);
     }
 
     public List<Asignacion> listarPorTecnico(Integer idTecnico) {
-        return asignacionRepository.findByTecnico_IdTecnico(idTecnico);
+        return asignacionRepository.findByTecnicoConRelaciones(idTecnico);
     }
 
     /**
@@ -55,6 +56,7 @@ public class AsignacionService {
      * Si colisiona, lanza ConflictoHorarioException (mapeada a HTTP 409 Conflict).
      */
     @Transactional
+    @CacheEvict(value = "dashboardMetricas", allEntries = true)
     public Asignacion asignarCuadrilla(AsignacionRequest request) {
         OrdenServicio orden = ordenServicioRepository.findById(request.getIdOrden())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Orden de servicio no encontrada con ID: " + request.getIdOrden()));

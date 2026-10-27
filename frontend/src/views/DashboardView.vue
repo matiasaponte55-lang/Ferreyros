@@ -13,7 +13,8 @@
 
       <button 
         @click="exportarReporte"
-        class="bg-[#FFCD11] hover:bg-yellow-400 text-black font-extrabold px-4 py-2.5 rounded-lg text-sm shadow transition flex items-center space-x-2 self-start md:self-auto">
+        :disabled="cargando"
+        class="bg-[#FFCD11] hover:bg-yellow-400 disabled:opacity-50 text-black font-extrabold px-4 py-2.5 rounded-lg text-sm shadow transition flex items-center space-x-2 self-start md:self-auto">
         <span>📥</span>
         <span>Descargar Informe Ejecutivo MARC</span>
       </button>
@@ -26,8 +27,10 @@
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
         <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Disponibilidad MARC Promedio</div>
         <div class="mt-2 flex items-baseline space-x-2">
-          <span class="text-3xl font-black text-white">{{ metricas?.disponibilidadMarcPromedio ?? 0 }}%</span>
+          <div v-if="cargando" class="h-9 w-24 bg-gray-700/60 rounded animate-pulse"></div>
+          <span v-else class="text-3xl font-black text-white">{{ metricas?.disponibilidadMarcPromedio ?? 0 }}%</span>
           <span 
+            v-if="!cargando"
             class="text-xs font-bold px-2 py-0.5 rounded border"
             :class="(metricas?.disponibilidadMarcPromedio ?? 0) >= 92 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20'">
             {{ (metricas?.disponibilidadMarcPromedio ?? 0) >= 92 ? 'Operativo ≥ SLA' : 'En Supervisión' }}
@@ -44,8 +47,11 @@
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
         <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tiempo Medio Reparación (MTTR)</div>
         <div class="mt-2 flex items-baseline space-x-2">
-          <span class="text-3xl font-black text-white">{{ metricas?.mttrPromedioHoras ?? 0 }} hrs</span>
-          <span class="text-xs font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+          <div v-if="cargando" class="h-9 w-24 bg-gray-700/60 rounded animate-pulse"></div>
+          <span v-else class="text-3xl font-black text-white">{{ metricas?.mttrPromedioHoras ?? 0 }} hrs</span>
+          <span 
+            v-if="!cargando"
+            class="text-xs font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
             {{ (metricas?.mttrPromedioHoras ?? 0) > 0 ? 'Horas Promedio' : 'Sin Paradas Cerradas' }}
           </span>
         </div>
@@ -60,8 +66,11 @@
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
         <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Ocupación Cuadrillas 14x7</div>
         <div class="mt-2 flex items-baseline space-x-2">
-          <span class="text-3xl font-black text-white">{{ metricas?.ocupacionCuadrillas ?? 0 }}%</span>
-          <span class="text-xs font-bold text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20">
+          <div v-if="cargando" class="h-9 w-24 bg-gray-700/60 rounded animate-pulse"></div>
+          <span v-else class="text-3xl font-black text-white">{{ metricas?.ocupacionCuadrillas ?? 0 }}%</span>
+          <span 
+            v-if="!cargando"
+            class="text-xs font-bold text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20">
             {{ (metricas?.ocupacionCuadrillas ?? 0) > 0 ? 'Activo en Faena' : 'Disponible en Taller' }}
           </span>
         </div>
@@ -76,8 +85,11 @@
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
         <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Horas Facturables Mes</div>
         <div class="mt-2 flex items-baseline space-x-2">
-          <span class="text-3xl font-black text-white">{{ metricas?.horasFacturables ?? 0 }} hrs</span>
-          <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+          <div v-if="cargando" class="h-9 w-24 bg-gray-700/60 rounded animate-pulse"></div>
+          <span v-else class="text-3xl font-black text-white">{{ metricas?.horasFacturables ?? 0 }} hrs</span>
+          <span 
+            v-if="!cargando"
+            class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
             Horas Registradas
           </span>
         </div>
@@ -99,27 +111,33 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
         <div class="bg-gray-800/60 p-3 rounded-lg border border-gray-700">
           <div class="text-xs text-gray-400">Solicitadas</div>
-          <div class="text-2xl font-black text-white mt-1">{{ metricas?.otsSolicitadas ?? 0 }}</div>
+          <div v-if="cargando" class="h-7 w-8 mx-auto mt-1 bg-gray-700 rounded animate-pulse"></div>
+          <div v-else class="text-2xl font-black text-white mt-1">{{ metricas?.otsSolicitadas ?? 0 }}</div>
         </div>
         <div class="bg-blue-950/40 p-3 rounded-lg border border-blue-800/50">
           <div class="text-xs text-blue-300">Asignadas</div>
-          <div class="text-2xl font-black text-blue-400 mt-1">{{ metricas?.otsAsignadas ?? 0 }}</div>
+          <div v-if="cargando" class="h-7 w-8 mx-auto mt-1 bg-blue-900/60 rounded animate-pulse"></div>
+          <div v-else class="text-2xl font-black text-blue-400 mt-1">{{ metricas?.otsAsignadas ?? 0 }}</div>
         </div>
         <div class="bg-yellow-950/40 p-3 rounded-lg border border-yellow-800/50">
           <div class="text-xs text-yellow-300">Diagnóstico</div>
-          <div class="text-2xl font-black text-yellow-400 mt-1">{{ metricas?.otsEnDiagnostico ?? 0 }}</div>
+          <div v-if="cargando" class="h-7 w-8 mx-auto mt-1 bg-yellow-900/60 rounded animate-pulse"></div>
+          <div v-else class="text-2xl font-black text-yellow-400 mt-1">{{ metricas?.otsEnDiagnostico ?? 0 }}</div>
         </div>
         <div class="bg-orange-950/40 p-3 rounded-lg border border-orange-800/50">
           <div class="text-xs text-orange-300">Reparación</div>
-          <div class="text-2xl font-black text-orange-400 mt-1">{{ metricas?.otsEnReparacion ?? 0 }}</div>
+          <div v-if="cargando" class="h-7 w-8 mx-auto mt-1 bg-orange-900/60 rounded animate-pulse"></div>
+          <div v-else class="text-2xl font-black text-orange-400 mt-1">{{ metricas?.otsEnReparacion ?? 0 }}</div>
         </div>
         <div class="bg-purple-950/40 p-3 rounded-lg border border-purple-800/50">
           <div class="text-xs text-purple-300">Control Calidad</div>
-          <div class="text-2xl font-black text-purple-400 mt-1">{{ metricas?.otsControlCalidad ?? 0 }}</div>
+          <div v-if="cargando" class="h-7 w-8 mx-auto mt-1 bg-purple-900/60 rounded animate-pulse"></div>
+          <div v-else class="text-2xl font-black text-purple-400 mt-1">{{ metricas?.otsControlCalidad ?? 0 }}</div>
         </div>
         <div class="bg-emerald-950/40 p-3 rounded-lg border border-emerald-800/50">
           <div class="text-xs text-emerald-300">Cerradas / Mes</div>
-          <div class="text-2xl font-black text-emerald-400 mt-1">{{ metricas?.otsCerradas ?? 0 }}</div>
+          <div v-if="cargando" class="h-7 w-8 mx-auto mt-1 bg-emerald-900/60 rounded animate-pulse"></div>
+          <div v-else class="text-2xl font-black text-emerald-400 mt-1">{{ metricas?.otsCerradas ?? 0 }}</div>
         </div>
       </div>
     </div>
@@ -147,7 +165,15 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800 font-medium">
-            <tr v-if="!metricas || !metricas.flotas || metricas.flotas.length === 0">
+            <tr v-if="cargando && (!metricas || !metricas.flotas || metricas.flotas.length === 0)">
+              <td colspan="8" class="text-center py-8 text-gray-400">
+                <div class="flex items-center justify-center space-x-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-ping"></span>
+                  <span class="text-xs font-semibold text-gray-300">Sincronizando telemetría y flota en tiempo real...</span>
+                </div>
+              </td>
+            </tr>
+            <tr v-else-if="!metricas || !metricas.flotas || metricas.flotas.length === 0">
               <td colspan="8" class="text-center py-8 text-gray-500">No hay maquinaria pesada registrada en el sistema.</td>
             </tr>
             <tr v-for="f in metricas?.flotas || []" :key="f.codigoFlota" class="hover:bg-gray-800/40 transition">
@@ -179,16 +205,28 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import api from '../api/client'
+import { useCatalogoStore } from '../stores/catalogo'
 
-const metricas = ref(null)
+const catalogoStore = useCatalogoStore()
+const metricas = ref(catalogoStore.metricasDashboard)
+const cargando = ref(!catalogoStore.metricasDashboard)
 
 const cargarMetricas = async () => {
+  if (!metricas.value) {
+    cargando.value = true
+  }
   try {
-    const res = await api.get('/dashboard/metricas')
-    metricas.value = res.data
+    const data = await catalogoStore.obtenerMetricas((inmediato) => {
+      metricas.value = inmediato
+      cargando.value = false
+    })
+    if (data) {
+      metricas.value = data
+    }
   } catch (err) {
     console.error('Error cargando métricas:', err)
+  } finally {
+    cargando.value = false
   }
 }
 

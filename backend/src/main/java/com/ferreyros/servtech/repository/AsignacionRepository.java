@@ -12,6 +12,22 @@ import java.util.List;
 @Repository
 public interface AsignacionRepository extends JpaRepository<Asignacion, Integer> {
 
+    @Query("SELECT DISTINCT a FROM Asignacion a " +
+           "LEFT JOIN FETCH a.orden o " +
+           "LEFT JOIN FETCH o.maquinaria " +
+           "LEFT JOIN FETCH a.tecnico t " +
+           "LEFT JOIN FETCH t.usuario " +
+           "WHERE o.idOrden = :idOrden")
+    List<Asignacion> findByOrdenConRelaciones(@Param("idOrden") Integer idOrden);
+
+    @Query("SELECT DISTINCT a FROM Asignacion a " +
+           "LEFT JOIN FETCH a.orden o " +
+           "LEFT JOIN FETCH o.maquinaria " +
+           "LEFT JOIN FETCH a.tecnico t " +
+           "LEFT JOIN FETCH t.usuario " +
+           "WHERE t.idTecnico = :idTecnico")
+    List<Asignacion> findByTecnicoConRelaciones(@Param("idTecnico") Integer idTecnico);
+
     List<Asignacion> findByOrden_IdOrden(Integer idOrden);
 
     List<Asignacion> findByTecnico_IdTecnico(Integer idTecnico);

@@ -82,7 +82,12 @@
           </thead>
           <tbody class="divide-y divide-gray-800 font-medium">
             <tr v-if="cargando">
-              <td colspan="9" class="text-center py-8 text-gray-400">Cargando flota de maquinaria pesada...</td>
+              <td colspan="9" class="text-center py-8 text-gray-400">
+                <div class="flex items-center justify-center space-x-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-ping"></span>
+                  <span class="text-xs font-semibold text-gray-300">Cargando flota de maquinaria pesada...</span>
+                </div>
+              </td>
             </tr>
             <tr v-else-if="maquinariasFiltradas.length === 0">
               <td colspan="9" class="text-center py-8 text-gray-400">No se encontraron maquinarias con los filtros aplicados.</td>
@@ -233,7 +238,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '../api/client'
+import { useCatalogoStore } from '../stores/catalogo'
 
+const catalogoStore = useCatalogoStore()
 const maquinarias = ref([])
 const cargando = ref(true)
 const showModal = ref(false)
@@ -259,12 +266,12 @@ const form = ref({
 
 const cargarCatalogos = async () => {
   try {
-    const [resSedes, resCli] = await Promise.all([
-      api.get('/sedes'),
-      api.get('/clientes')
+    const [listaSedes, listaCli] = await Promise.all([
+      catalogoStore.obtenerSedes(),
+      catalogoStore.obtenerClientes()
     ])
-    sedes.value = resSedes.data || []
-    clientes.value = resCli.data || []
+    sedes.value = listaSedes || []
+    clientes.value = listaCli || []
     if (sedes.value.length > 0 && !form.value.idSede) {
       form.value.idSede = sedes.value[0].idSede
     }

@@ -16,7 +16,7 @@ public class TecnicoService {
     private TecnicoRepository tecnicoRepository;
 
     public List<Tecnico> listarTodos(String certificacion, String turno) {
-        List<Tecnico> lista = tecnicoRepository.findAll();
+        List<Tecnico> lista = tecnicoRepository.findAllConRelaciones();
 
         return lista.stream()
                 .filter(t -> certificacion == null || certificacion.isEmpty() || "Todas".equalsIgnoreCase(certificacion) ||
@@ -27,11 +27,11 @@ public class TecnicoService {
     }
 
     public List<Tecnico> listarDisponibles() {
-        return tecnicoRepository.findByEstadoDisponibilidad("DISPONIBLE");
+        return tecnicoRepository.findDisponiblesConRelaciones();
     }
 
     public Tecnico obtenerPorId(Integer id) {
-        return tecnicoRepository.findById(id)
+        return tecnicoRepository.findByIdConRelaciones(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Técnico no encontrado con ID: " + id));
     }
 
