@@ -1,0 +1,1032 @@
+{
+  "info": {
+    "_postman_id": "a8dd16ca-ae4b-4bec-b4f7-6a5ced4b55e6",
+    "name": "Ferreyros ServTech 2026 - Suite Oficial de Pruebas QA (Juan Zamata)",
+    "description": "Colección integral de pruebas funcionales, unitarias, de integración y escenarios de error (Negative Testing) para Ferreyros ServTech 2026. Abarca autenticación JWT RBAC, horómetro ascendente RF-03, exclusión horaria GiST RF-04, ATS digital SHA-256 RF-09 y auditoría forense RF-14.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01. Autenticación & Perímetro RBAC",
+      "item": [
+        {
+          "name": "01.1 - Login Exitoso con Credenciales Reales (Genera JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Respuesta contiene token JWT válido', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('token');",
+                  "    pm.expect(jsonData.token).to.be.a('string');",
+                  "    pm.expect(jsonData.token.length).to.be.above(20);",
+                  "    pm.environment.set('token', jsonData.token);",
+                  "});",
+                  "pm.test('Rol de usuario verificado en BD Supabase', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('rol');",
+                  "});",
+                  "pm.test('Tiempo de respuesta inferior a 1200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Valida autenticación contra base de datos Supabase y emisión de token JWT con rol RBAC verificado.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{supervisor_user}}\",\n  \"password\": \"{{supervisor_pass}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "01.2 - [Error 401] Rechazo de Credenciales Inválidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 401 Unauthorized', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "pm.test('Cuerpo de error contiene status 401 estructurado', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Prueba negativa: Verifica que credenciales no registradas o clave errónea sean bloqueadas con HTTP 401.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"noexiste@ferreyros.com.pe\",\n  \"password\": \"ClaveErronea2026!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "01.3 - [Error 400] Payload Vacío en Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 400 Bad Request o 401 Unauthorized', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Prueba de frontera: Envío de objeto vacío sin campos username ni password.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02. Gestión de Maquinaria y Telemetría CAT",
+      "item": [
+        {
+          "name": "02.1 - Listar Flota de Maquinarias Pesadas CAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Respuesta es un arreglo de maquinaria pesada', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.environment.set('idMaquinaria', jsonData[0].idMaquinaria);",
+                  "        pm.environment.set('horometroActual', jsonData[0].horometroAcumulado);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/maquinarias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maquinarias"
+              ]
+            },
+            "description": "Consulta flota CAT, modelos, contratos MARC y horómetros acumulados en telemetría."
+          },
+          "response": []
+        },
+        {
+          "name": "02.2 - [Error 404] Consulta de Maquinaria Inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Respuesta contiene error NOT_FOUND', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error).to.eql('NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/maquinarias/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maquinarias",
+                "999999"
+              ]
+            },
+            "description": "Prueba negativa: Verifica manejo de recursos inexistentes con código 404."
+          },
+          "response": []
+        },
+        {
+          "name": "02.3 - [Error 400] Identificador con Caracteres Alfanuméricos en URL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error detectado como PARAMETRO_URL_INVALIDO', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error).to.eql('PARAMETRO_URL_INVALIDO');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/maquinarias/abc_invalido",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maquinarias",
+                "abc_invalido"
+              ]
+            },
+            "description": "Prueba de robustez: Inyección de caracteres alfanuméricos en parámetro entero de ruta."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03. Órdenes de Servicio & Regla de Horómetro RF-03",
+      "item": [
+        {
+          "name": "03.1 - Listar Órdenes de Servicio Registradas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Respuesta es un listado JSON de órdenes', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ordenes-servicio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ordenes-servicio"
+              ]
+            },
+            "description": "Lista el universo de órdenes de trabajo con filtros por sede y estado."
+          },
+          "response": []
+        },
+        {
+          "name": "03.2 - Crear Orden Exitosa (Horómetro Ascendente Válido)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Orden creada posee ID y código correlativo OT-2026', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('idOrden');",
+                  "    pm.expect(jsonData).to.have.property('codigoOt');",
+                  "    pm.environment.set('idOrdenCreada', jsonData.idOrden);",
+                  "});",
+                  "pm.test('Estado inicial asignado es SOLICITADA', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.estado).to.eql('SOLICITADA');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ordenes-servicio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ordenes-servicio"
+              ]
+            },
+            "description": "Cumple RF-02 y RF-03: horómetro ingresado (320.0) es superior al acumulado (250.0).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMaquinaria\": 2,\n  \"numeroSeriePin\": \"CAT987612\",\n  \"idSede\": 1,\n  \"tipoMantenimiento\": \"PM2_500H\",\n  \"prioridad\": \"ALTA\",\n  \"horometroRegistro\": 320.0,\n  \"fallaReportada\": \"Mantenimiento preventivo 500h programado seg\\u00fan plan matriz\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "03.3 - [Error 400] Rechazo por Horómetro Descendente (Regla RF-03)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Tipo de error es HOROMETRO_INVALIDO', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error).to.eql('HOROMETRO_INVALIDO');",
+                  "    pm.expect(jsonData.mensaje).to.include('no puede ser inferior al acumulado');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ordenes-servicio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ordenes-servicio"
+              ]
+            },
+            "description": "Prueba negativa crítica: Bloqueo de fraude de horómetro según RF-03 y trigger de PostgreSQL.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMaquinaria\": 2,\n  \"numeroSeriePin\": \"CAT987612\",\n  \"idSede\": 1,\n  \"tipoMantenimiento\": \"PM1_250H\",\n  \"prioridad\": \"MEDIA\",\n  \"horometroRegistro\": 50.0,\n  \"fallaReportada\": \"Intento de registro con hor\\u00f3metro fraudulento menor al telemetrizado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "03.4 - [Error 400] Inyección de Texto en Horómetro Numérico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error clasificado como TIPO_DATO_INCOMPATIBLE', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error).to.eql('TIPO_DATO_INCOMPATIBLE');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ordenes-servicio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ordenes-servicio"
+              ]
+            },
+            "description": "Prueba negativa de robustez: Validación del serializador Jackson (HttpMessageNotReadableException).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMaquinaria\": 2,\n  \"numeroSeriePin\": \"CAT987612\",\n  \"idSede\": 1,\n  \"tipoMantenimiento\": \"PM1_250H\",\n  \"prioridad\": \"MEDIA\",\n  \"horometroRegistro\": \"HOROMETRO_TEXTO_INVALIDO\",\n  \"fallaReportada\": \"Prueba de tipado de datos\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "03.5 - [Error 400] Omisión de Campos Obligatorios (@Valid)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error clasificado como VALIDACION_CAMPOS', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error).to.eql('VALIDACION_CAMPOS');",
+                  "    pm.expect(jsonData).to.have.property('errores');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ordenes-servicio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ordenes-servicio"
+              ]
+            },
+            "description": "Prueba de validación de Bean Validation DTO (@NotNull, @NotBlank).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prioridad\": \"ALTA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "03.6 - Actualizar Estado de OT a ASIGNADA con Auditoría Forense RF-14",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Estado de la orden transicionó a ASIGNADA', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.estado).to.eql('ASIGNADA');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ordenes-servicio/{{idOrdenCreada}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "ordenes-servicio",
+                "{{idOrdenCreada}}",
+                "estado"
+              ]
+            },
+            "description": "Verifica actualización y registro en tabla inmutable auditoria_estados_ot.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevoEstado\": \"ASIGNADA\",\n  \"motivoRetrabajo\": \"Asignaci\\u00f3n programada por supervisor de taller\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04. Asignaciones & Regla GiST Anti-Solapamiento RF-04",
+      "item": [
+        {
+          "name": "04.1 - Listar Técnicos Certificados CAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Respuesta contiene técnicos disponibles', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.environment.set('idTecnico', jsonData[0].idTecnico);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tecnicos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tecnicos"
+              ]
+            },
+            "description": "Lista cuadrillas técnicas y niveles de certificación CAT."
+          },
+          "response": []
+        },
+        {
+          "name": "04.2 - Registrar Asignación en Franja Libre",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Asignación confirmada en base de datos', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('idAsignacion');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/asignaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "asignaciones"
+              ]
+            },
+            "description": "Asignación válida en franja no colisionante.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idOrden\": 1,\n  \"idTecnico\": 1,\n  \"horaInicio\": \"06:00\",\n  \"horaFin\": \"08:00\",\n  \"rolCuadrilla\": \"LIDER_TECNICO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "04.3 - [Error 409] Rechazo por Solapamiento GiST (Regla RF-04)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 409 Conflict', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test('Error GiST identificado como CONFLICT con código de OT conflictiva', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error).to.eql('CONFLICT');",
+                  "    pm.expect(jsonData).to.have.property('codigoOtConflictiva');",
+                  "    pm.expect(jsonData.mensaje).to.include('ya cuenta con una orden asignada');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/asignaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "asignaciones"
+              ]
+            },
+            "description": "Prueba negativa de exclusión matemática GiST btree_gist (PostgreSQL 23P01).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idOrden\": 2,\n  \"idTecnico\": 1,\n  \"horaInicio\": \"06:30\",\n  \"horaFin\": \"07:30\",\n  \"rolCuadrilla\": \"APOYO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05. Inspección Digital ATS y Firma SHA-256 (RF-09)",
+      "item": [
+        {
+          "name": "05.1 - Registrar Checklist ATS y Verificación LOTO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Checklist persistido con éxito en base de datos', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('idChecklist');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/inspecciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "inspecciones"
+              ]
+            },
+            "description": "Guarda evaluación física y protocolos de seguridad minera DS-024.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idOrden\": 1,\n  \"verificacionLoto\": true,\n  \"petarAprobado\": true,\n  \"sistemaMotor\": \"CONFORME\",\n  \"sistemaHidraulico\": \"CONFORME\",\n  \"trenRodaje\": \"OBSERVADO\",\n  \"sistemaElectrico\": \"CONFORME\",\n  \"cabinaMandos\": \"CONFORME\",\n  \"observacionesTecnicas\": \"Desgaste de zapatas al 40% detectado en inspecci\\u00f3n visual de campo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "05.2 - Sellar Inspección con Firma Digital y Hash SHA-256",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Expediente sellado con Hash SHA-256 inmutable de 64 caracteres', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.hashSha256).to.have.lengthOf(64);",
+                  "    pm.expect(jsonData.firmaDigitalBase64).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/inspecciones/1/firmar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "inspecciones",
+                "1",
+                "firmar"
+              ]
+            },
+            "description": "Sellado criptográfico inmutable de conformidad RF-09.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firmaBase64\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==\",\n  \"hashSha256\": \"a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06. Dashboard Gerencial & Indicadores MARC",
+      "item": [
+        {
+          "name": "06.1 - Obtener Métricas Operativas MTBF / MTTR",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Métricas contienen indicadores clave de mantenimiento', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('disponibilidadFlota');",
+                  "    pm.expect(jsonData).to.have.property('otsAbiertas');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dashboard/metricas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard",
+                "metricas"
+              ]
+            },
+            "description": "KPIs de disponibilidad y contratos MARC."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

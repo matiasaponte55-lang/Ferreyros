@@ -7,8 +7,8 @@ info:
     horaria con exclusión matemática GiST (RF-04), inspección digital ATS con firma SHA-256 (RF-09) y auditoría (RF-14).
   version: 1.0.0
   contact:
-    name: Juan Zamata (Área de Calidad y Arquitectura de Software)
-    email: jzamata@ferreyros.com.pe
+    name: Draacoo12 - Juan Zamata (Área de Calidad y Arquitectura de Software)
+    email: juanzamata4@gmail.com
 servers:
   - url: http://localhost:8080/api/v1
     description: Servidor Local de Desarrollo

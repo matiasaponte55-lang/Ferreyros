@@ -1,5 +1,5 @@
 # Diagramas de Secuencia y Arquitectura Operativa - ServTech 2026
-**Autor:** Juan Zamata (QA & Arquitectura de Software)
+**Autor:** Draacoo12 - Juan Zamata (QA & Arquitectura de Software)
 
 ---
 
