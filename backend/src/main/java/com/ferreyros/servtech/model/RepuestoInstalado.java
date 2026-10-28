@@ -2,11 +2,7 @@ package com.ferreyros.servtech.model;
 
 import jakarta.persistence.*;
 
-/**
- * Entidad RepuestoInstalado:
- * Registro de repuestos e insumos genuinos Caterpillar (1R-0716, filtros, aceites)
- * consumidos e instalados en la maquinaria durante la orden de servicio.
- */
+/* Entidad RepuestoInstalado: Registro de repuestos consumidos e instalados en la maquinaria durante OT. */
 @Entity
 @Table(name = "repuestos_instalados")
 public class RepuestoInstalado {

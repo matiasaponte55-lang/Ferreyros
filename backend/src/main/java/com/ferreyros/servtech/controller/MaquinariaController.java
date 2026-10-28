@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controlador para la gestión del catálogo de maquinaria pesada CAT (Pantalla 2 y 3 / RF-12).
+ * Controlador para la gestión del catálogo de maquinaria pesada CAT
  */
 @RestController
 @RequestMapping("/api/v1/maquinarias")

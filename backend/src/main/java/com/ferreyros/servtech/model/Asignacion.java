@@ -3,11 +3,7 @@ package com.ferreyros.servtech.model;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
-/**
- * Entidad Asignacion:
- * Despacho temporal de técnicos a órdenes de trabajo con protección
- * contra solapamientos (Regla Anti-Solapamiento GiST).
- */
+/* Despacho temporal de técnicos, con protección contra solapamientos  */
 @Entity
 @Table(name = "asignaciones")
 public class Asignacion {

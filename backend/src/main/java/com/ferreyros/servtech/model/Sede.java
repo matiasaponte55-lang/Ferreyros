@@ -3,11 +3,7 @@ package com.ferreyros.servtech.model;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
-/**
- * Entidad Sede:
- * Registra los talleres zonales, Centros de Reparación de Componentes (CRC Arequipa - La Joya)
- * y campamentos mineros (Cerro Verde, Las Bambas, Cuajone, etc.).
- */
+/* Entidad Sede: Centros de Reparación de Componentes y campamentos mineros */
 @Entity
 @Table(name = "sedes")
 public class Sede {

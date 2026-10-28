@@ -26,10 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Pruebas de integración de endpoints REST con MockMvc (Juan Zamata - QA).
- * Valida códigos HTTP, serialización JSON y manejo de errores.
- */
+/* Pruebas de integración de endpoints REST con MockMvc */
 @ExtendWith(MockitoExtension.class)
 public class OrdenServicioControllerIntegrationTest {
 

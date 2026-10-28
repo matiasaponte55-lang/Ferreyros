@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utilidad para generación y validación de tokens JWT (HMAC-SHA256).
+ * Utilidad para generación y validación de tokens JWT 
  */
 @Component
 public class JwtUtil {

@@ -4,12 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
-/**
- * ===================================================================
- * SISTEMA WEB SERVTECH 2026 - FERREYROS S.A.
- * Clase principal que arranca el servidor backend Spring Boot 3.
- * ===================================================================
- */
+/* SISTEMA WEB SERVTECH 2026 - FERREYROS S.A.*/
 @SpringBootApplication
 @EnableCaching
 public class ServTechApplication {

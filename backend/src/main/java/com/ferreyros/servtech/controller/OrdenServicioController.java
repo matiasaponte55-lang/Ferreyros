@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controlador REST para Órdenes de Servicio (Pantallas 5, 6, 8 / RF-02, RF-03, RF-05, RF-06).
+ * Controlador REST para Órdenes de Servicio 
  */
 @RestController
 @RequestMapping("/api/v1/ordenes-servicio")

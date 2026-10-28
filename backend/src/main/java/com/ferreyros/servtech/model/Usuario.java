@@ -4,11 +4,7 @@ import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-/**
- * Entidad Usuario:
- * Representa las cuentas del sistema con roles para el control RBAC
- * (ADMINISTRADOR, PLANIFICADOR, SUPERVISOR, TECNICO, CLIENTE).
- */
+/* Entidad Usuario: Representa las cuentas del sistema con roles para el control RBAC */
 @Entity
 @Table(name = "usuarios")
 public class Usuario {

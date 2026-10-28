@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controlador de Autenticación y Perímetro de Seguridad (Pantalla 1 / RF-01).
- * Expone el endpoint POST /api/v1/auth/login.
- */
+/* Controla el Login  */
 @RestController
 @RequestMapping("/api/v1/auth")
 @CrossOrigin(originPatterns = "*")

@@ -50,11 +50,7 @@ public class AsignacionService {
         return asignacionRepository.findByTecnicoConRelaciones(idTecnico);
     }
 
-    /**
-     * Algoritmo de Asignación y Verificación Horaria con Regla Anti-Solapamiento GiST (CU-03 / RF-04):
-     * Valida que no exista colisión temporal: (InicioExistente < FinNuevo) AND (FinExistente > InicioNuevo).
-     * Si colisiona, lanza ConflictoHorarioException (mapeada a HTTP 409 Conflict).
-     */
+    /* Algoritmo de Asignación y Verificación Horaria con Regla Anti-Solapamiento GiST     */
     @Transactional
     @CacheEvict(value = "dashboardMetricas", allEntries = true)
     public Asignacion asignarCuadrilla(AsignacionRequest request) {
@@ -112,7 +108,7 @@ public class AsignacionService {
         tecnico.setEstadoOperativo("EN_SERVICIO");
         tecnicoRepository.save(tecnico);
 
-        // Bitácora Inmutable (RF-14)
+        // Bitácora Inmutable 
         Usuario usuarioAudit = tecnico.getUsuario() != null ? tecnico.getUsuario() : usuarioRepository.findAll().get(0);
         String nombreTecnico = (tecnico.getUsuario() != null)
                 ? tecnico.getUsuario().getNombres() + " " + tecnico.getUsuario().getApellidos()

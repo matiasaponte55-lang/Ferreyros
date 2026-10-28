@@ -18,10 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * Manejador global de excepciones para estandarizar las respuestas JSON de error
- * y garantizar validaciones exhaustivas con mensajes precisos en español.
- */
+/* Manejador global de excepciones para estandarizar las respuestas JSON de error */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

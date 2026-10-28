@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controlador de cuadrillas técnicas, turnos mineros 14x7 y competencias CAT (Pantalla 4 / RF-13).
+ * Controlador de cuadrillas técnicas, turnos mineros 14x7 y competencias CAT
  */
 @RestController
 @RequestMapping("/api/v1/tecnicos")

@@ -21,9 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-/**
- * Pruebas unitarias de autenticación RBAC y validación BCrypt (Juan Zamata - QA).
- */
+/* Pruebas unitarias de autenticación RBAC y validación BCrypt */
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
 

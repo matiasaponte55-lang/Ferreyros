@@ -1,4 +1,4 @@
-// src/stores/auth.js - Gestión de Estado Global con Pinia (RF-01 / RNF-05)
+// src/stores/auth.js - Gestión de Estado Global con Pinia
 import { defineStore } from 'pinia'
 import api from '../api/client'
 
@@ -20,10 +20,7 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    /**
-     * Autenticación estricta contra el Backend y PostgreSQL (Supabase).
-     * Si las credenciales no son válidas o el usuario no existe, arroja error y no concede acceso.
-     */
+    /* Autenticación estricta contra el Backend y PostgreSQL*/
     async login(username, password, rol = null) {
       const response = await api.post('/auth/login', { 
         username: username.trim(), 

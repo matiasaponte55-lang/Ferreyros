@@ -21,10 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Pruebas unitarias para OrdenServicioService utilizando Mockito (Juan Zamata - QA).
- * Valida la regla de horómetro ascendente RF-03 y transiciones de estado de OTs.
- */
+/* Pruebas unitarias para OrdenServicioService utilizando Mockito */
 @ExtendWith(MockitoExtension.class)
 public class OrdenServicioServiceTest {
 

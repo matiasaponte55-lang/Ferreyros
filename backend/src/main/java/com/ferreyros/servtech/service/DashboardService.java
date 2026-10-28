@@ -18,10 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Servicio de Inteligencia Operativa y KPIs Dinámicos de Mantenimiento MARC (RF-11 / RF-12).
- * Optimizado con ejecución asíncrona concurrente (CompletableFuture) y caché en memoria.
- */
+/* Servicio de Inteligencia Operativa y KPIs Dinámicos de Mantenimiento MARC  */
 @Service
 public class DashboardService {
 
@@ -77,7 +74,7 @@ public class DashboardService {
         long totalTecnicos = futureTotalTecnicos.join();
         long asignacionesActivas = futureAsignaciones.join();
 
-        // 1. Conteo de órdenes agrupadas por estado
+        // Conteo de órdenes agrupadas por estado
         long solicitadas = 0;
         long asignadas = 0;
         long diagnostico = 0;
@@ -113,7 +110,7 @@ public class DashboardService {
         dto.setOtsCerradas(cerradas);
         dto.setTotalOtsActivas(solicitadas + asignadas + diagnostico + reparacion + qc);
 
-        // 2. Disponibilidad MARC Promedio (calculada sobre flota real cargada)
+        // Disponibilidad MARC Promedio 
         BigDecimal sumaDisp = BigDecimal.ZERO;
         List<DashboardMetricasDto.FlotaEstadoDto> listaFlota = new ArrayList<>();
 
@@ -122,7 +119,7 @@ public class DashboardService {
             BigDecimal disp;
             String condicion;
 
-            // Cálculo dinámico de disponibilidad física minera: (Horas Disponibles / Horas Totales) * 100
+            // Cálculo dinámico de disponibilidad física minera
             BigDecimal horasMes = new BigDecimal("720.00");
             BigDecimal horasDetencion = BigDecimal.ZERO;
             if ("EN_MANTENIMIENTO".equalsIgnoreCase(m.getEstadoOperativo())) {
@@ -165,7 +162,7 @@ public class DashboardService {
         dto.setDisponibilidadMarcPromedio(dispPromedio);
         dto.setFlotas(listaFlota);
 
-        // 3. MTTR Promedio (Tiempo Medio de Reparación solo de OTs concluidas)
+        // Tiempo Medio de Reparación solo de OTs concluidas
         if (ordenesCerradas.isEmpty()) {
             dto.setMttrPromedioHoras(BigDecimal.ZERO);
             dto.setHorasFacturables(0L);
@@ -180,7 +177,7 @@ public class DashboardService {
             dto.setHorasFacturables((long) Math.round(totalHoras));
         }
 
-        // 4. Ocupación de Cuadrillas 14x7
+        // Ocupación de Cuadrillas 14x7
         if (totalTecnicos == 0 || asignacionesActivas == 0) {
             dto.setOcupacionCuadrillas(BigDecimal.ZERO);
         } else {

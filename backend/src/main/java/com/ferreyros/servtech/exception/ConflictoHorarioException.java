@@ -3,9 +3,7 @@ package com.ferreyros.servtech.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-/**
- * Excepción lanzada cuando ocurre una colisión horaria de cuadrillas (Regla GiST).
- * Mapeada al código de estado HTTP 409 Conflict.
+/* Excepción lanzada cuando ocurre una colisión horaria de cuadrillas, error HTTP 409 Conflict.
  */
 @ResponseStatus(HttpStatus.CONFLICT)
 public class ConflictoHorarioException extends RuntimeException {

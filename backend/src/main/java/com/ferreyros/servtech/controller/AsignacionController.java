@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controlador para la Matriz Dispatcher View y Asignación de Cuadrillas (Pantalla 7 / CU-03 / RF-04).
- * Si existe solapamiento temporal responde con HTTP 409 Conflict (Regla GiST).
- */
+/* Controla la asignacion de cuadrillas, y el error HTTP 409 */
 @RestController
 @RequestMapping("/api/v1/asignaciones")
 @CrossOrigin(originPatterns = "*")

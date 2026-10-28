@@ -5,9 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-/**
- * Tabla asociativa que acredita qué certificaciones oficiales Caterpillar posee cada técnico y su vigencia.
- */
+/* Tabla asociativa que acredita qué certificaciones oficiales Caterpillar posee cada técnico y su vigencia*/
 @Entity
 @Table(name = "tecnico_competencias")
 public class TecnicoCompetencia {

@@ -3,11 +3,7 @@ package com.ferreyros.servtech.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
-/**
- * Entidad Tecnico:
- * Personal técnico especializado bajo régimen minero atípico (14x7)
- * y acreditación oficial Caterpillar Service Pro.
- */
+/* Entidad Tecnico: Técnico especializado bajo régimen minero atípico y acreditación oficial Caterpillar */
 @Entity
 @Table(name = "tecnicos")
 public class Tecnico {

@@ -5,10 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * Configuración perimetral de CORS para permitir la comunicación fluida
- * con el frontend SPA en Vue.js (puerto 5173 / localhost) y tablets en red local.
- */
+/*Configuración para permitir la comunicación con el frontend SPA en Vue.js */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 

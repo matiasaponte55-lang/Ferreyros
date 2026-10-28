@@ -14,11 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-/**
- * Servicio de Autenticación y Control Perimetral RBAC (RF-01 / RNF-05).
- * Valida de forma estricta las credenciales contra los registros en PostgreSQL (Supabase)
- * utilizando encriptación unidireccional BCrypt y firma de tokens JWT.
- */
+/* Valida la credenciales para poder entrar a la pagina */
 @Service
 public class AuthService {
 
@@ -77,7 +73,7 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas: contraseña no válida");
         }
 
-        // Control de Perímetro RBAC: Si se especifica un rol requerido, validar que corresponda
+        // Control de Perímetro: Si se especifica un rol requerido, validar que corresponda
         if (request.getRol() != null && !request.getRol().trim().isEmpty()) {
             String rolSolicitado = request.getRol().trim();
             if (!usuario.getRol().equalsIgnoreCase(rolSolicitado) && !usuario.getRol().equals("ROLE_ADMIN")) {

@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Controlador para Inspección Técnica Digital ATS (DS-024) y Firma Digital con Hash SHA-256
- * (Pantallas 9 y 10 / CU-06 / RF-07, RF-08, RF-09, RF-10).
+ * Controlador para Inspección Técnica Digital ATS y Firma Digital con Hash SHA-256
  */
 @RestController
 @RequestMapping("/api/v1/inspecciones")

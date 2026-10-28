@@ -32,11 +32,7 @@ public interface AsignacionRepository extends JpaRepository<Asignacion, Integer>
 
     List<Asignacion> findByTecnico_IdTecnico(Integer idTecnico);
 
-    /**
-     * Regla Anti-Solapamiento GiST (Sección 11.6 del informe):
-     * Comprueba si el técnico ya tiene una labor en el intervalo solicitado
-     * utilizando la condición matemática: (InicioExistente < FinNuevo) AND (FinExistente > InicioNuevo).
-     */
+    /* Regla Anti-Solapamiento GiST  */
     @Query("SELECT a FROM Asignacion a WHERE a.tecnico.idTecnico = :idTecnico " +
            "AND a.estadoAsignacion != 'CANCELADA' " +
            "AND (a.fechaInicio < :fin AND a.fechaFin > :inicio)")

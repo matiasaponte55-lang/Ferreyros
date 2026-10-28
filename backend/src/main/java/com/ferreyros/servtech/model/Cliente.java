@@ -3,10 +3,7 @@ package com.ferreyros.servtech.model;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
-/**
- * Entidad Cliente:
- * Representa las corporaciones mineras titulares de maquinaria Caterpillar (Cerro Verde, Las Bambas, etc.).
- */
+/* Entidad Cliente: Representa las corporaciones de maquinaria Caterpillar (Cerro Verde, Las Bambas, etc.). */
 @Entity
 @Table(name = "clientes")
 public class Cliente {

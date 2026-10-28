@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-/**
- * Entidad Maquinaria:
- * Catálogo maestro de equipos pesados Caterpillar (797F, 6060 FS, D11T, 994K)
+/* Entidad Maquinaria: Catálogo maestro de equipos pesados Caterpillar (797F, 6060 FS, D11T, 994K)
  * asignados a faenas mineras bajo contratos MARC.
  */
 @Entity

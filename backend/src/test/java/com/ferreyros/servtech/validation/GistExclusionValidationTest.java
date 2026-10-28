@@ -24,10 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Pruebas de validación de exclusión temporal matemática GiST (Juan Zamata - QA).
- * Verifica que no se permitan asignaciones solapadas para un mismo técnico (CU-03 / RF-04).
- */
+/* Pruebas de validación de exclusión temporal matemática GiST */
 @ExtendWith(MockitoExtension.class)
 public class GistExclusionValidationTest {
 

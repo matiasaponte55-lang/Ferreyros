@@ -11,10 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Controlador auxiliar de catálogos maestros y bitácora de auditoría inmutable (RF-14).
- * Optimizado con Spring Cache y cabeceras HTTP Cache-Control (5 minutos).
- */
 @RestController
 @RequestMapping("/api/v1")
 @CrossOrigin(originPatterns = "*")
