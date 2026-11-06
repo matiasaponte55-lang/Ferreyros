@@ -3,12 +3,7 @@ package com.ferreyros.servtech.model;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
-/**
- * Entidad AuditoriaEstadoOt:
- * Bitácora inmutable Append-Only de transiciones de estado de órdenes de trabajo (RF-14).
- * Registra cada cambio con marca temporal inalterable, usuario responsable (UUID)
- * y motivo obligatorio de retrabajo si fue rechazada en Control de Calidad.
- */
+/* Entidad AuditoriaEstadoOt: Bitácora inmutable */
 @Entity
 @Table(name = "auditoria_estados_ot")
 public class AuditoriaEstadoOt {

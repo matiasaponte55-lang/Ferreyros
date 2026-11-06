@@ -3,9 +3,7 @@ package com.ferreyros.servtech.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
-/**
- * Entidad ModeloCatMaestro:
- * Catálogo técnico de modelos Caterpillar (ej: 797F, 6060 FS, D11T, 994K).
+/* Entidad ModeloCatMaestro: Catálogo técnico de modelos Caterpillar (ej: 797F, 6060 FS, D11T, 994K).
  */
 @Entity
 @Table(name = "modelo_cat_maestro")

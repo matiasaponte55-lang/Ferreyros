@@ -2,10 +2,7 @@ package com.ferreyros.servtech.model;
 
 import jakarta.persistence.*;
 
-/**
- * Entidad Competencia:
- * Catálogo de habilidades y certificaciones técnicas oficiales Caterpillar Service Pro.
- */
+/* Entidad Competencia: Catálogo de habilidades y certificaciones técnicas oficiales Caterpillar */
 @Entity
 @Table(name = "competencias")
 public class Competencia {

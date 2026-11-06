@@ -4,11 +4,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-/**
- * Entidad ChecklistInspeccion:
- * Diligenciamiento digital del Análisis de Trabajo Seguro (ATS),
- * bloqueo LOTO, inspección técnica de subsistemas CAT y firma táctil con hash SHA-256.
- */
+/* Entidad ChecklistInspeccion: Análisis de Trabajo Seguro (ATS) */
 @Entity
 @Table(name = "checklists_inspeccion")
 public class ChecklistInspeccion {

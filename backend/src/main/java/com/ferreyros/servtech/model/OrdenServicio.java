@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-/**
- * Entidad central transaccional que gestiona el ciclo de vida
- * de los servicios preventivos y correctivos de soporte técnico Caterpillar.
- */
+/* Entidad central transaccional que gestiona el ciclo de vida */
 @Entity
 @Table(name = "ordenes_servicio")
 public class OrdenServicio {

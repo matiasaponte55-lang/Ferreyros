@@ -3,11 +3,7 @@ package com.ferreyros.servtech.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
-/**
- * Entidad Tecnico:
- * Personal técnico especializado bajo régimen minero atípico (14x7)
- * y acreditación oficial Caterpillar Service Pro.
- */
+/* Entidad Tecnico: Técnico especializado bajo régimen minero atípico y acreditación oficial Caterpillar */
 @Entity
 @Table(name = "tecnicos")
 public class Tecnico {
@@ -96,7 +92,11 @@ public class Tecnico {
     public String getEstadoOperativo() { return estadoOperativo; }
     public void setEstadoOperativo(String estadoOperativo) {
         this.estadoOperativo = estadoOperativo;
-        this.estadoDisponibilidad = estadoOperativo;
+        if ("ASIGNADO".equalsIgnoreCase(estadoOperativo)) {
+            this.estadoDisponibilidad = "EN_SERVICIO";
+        } else {
+            this.estadoDisponibilidad = estadoOperativo;
+        }
     }
 
     public BigDecimal getHorasAcumuladasMes() { return horasAcumuladasMes; }
