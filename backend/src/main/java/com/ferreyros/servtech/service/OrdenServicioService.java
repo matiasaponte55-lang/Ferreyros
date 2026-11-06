@@ -7,12 +7,12 @@ import com.ferreyros.servtech.exception.RecursoNoEncontradoException;
 import com.ferreyros.servtech.model.*;
 import com.ferreyros.servtech.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +34,7 @@ public class OrdenServicioService {
     private AuditoriaEstadoOtRepository auditoriaRepository;
 
     public List<OrdenServicio> listarOrdenes(String estado, Integer idSede, String prioridad, String buscar) {
-        List<OrdenServicio> lista = ordenServicioRepository.findAllByOrderByCreadoEnDesc();
+        List<OrdenServicio> lista = ordenServicioRepository.findAllConRelaciones();
 
         return lista.stream()
                 .filter(o -> estado == null || estado.isEmpty() || "Todas".equalsIgnoreCase(estado) ||
@@ -55,19 +55,17 @@ public class OrdenServicioService {
     }
 
     public OrdenServicio obtenerPorId(Integer id) {
-        return ordenServicioRepository.findById(id)
+        return ordenServicioRepository.findByIdConRelaciones(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Orden de trabajo no encontrada con ID: " + id));
     }
 
     public List<OrdenServicio> listarPorMaquinaria(Integer idMaquinaria) {
-        return ordenServicioRepository.findByMaquinaria_IdMaquinaria(idMaquinaria);
+        return ordenServicioRepository.findByMaquinariaConRelaciones(idMaquinaria);
     }
 
-    /**
-     * Apertura formal de Orden de Trabajo (RF-02 y RF-03):
-     * Valida la regla ascendente del horómetro y actualiza automáticamente el acumulado.
-     */
+    /* ODT Valida el horometro y actualiza el acumulado de la maquinaria */
     @Transactional
+    @CacheEvict(value = "dashboardMetricas", allEntries = true)
     public OrdenServicio crearOrden(NuevaOrdenRequest request) {
         Maquinaria maquinaria;
         if (request.getIdMaquinaria() != null) {
@@ -80,7 +78,7 @@ public class OrdenServicioService {
             throw new IllegalArgumentException("Debe especificar la maquinaria o su número de serie PIN");
         }
 
-        // VALIDACIÓN DE HORÓMETRO ASCENDENTE (RF-03 & Trigger PL/pgSQL)
+        // VALIDACIÓN DE HORÓMETRO ASCENDENTE 
         if (request.getHorometroRegistro() == null) {
             throw new HorometroInvalidoException("El horómetro es un campo obligatorio");
         }
@@ -127,7 +125,8 @@ public class OrdenServicioService {
         if (prioridad == null || prioridad.isEmpty()) prioridad = "MEDIA";
         if (prioridad.contains("CRITICA")) prioridad = "CRITICA_DOWN_MACHINE";
 
-        int aleatorio = 1000 + new Random().nextInt(9000);
+        java.security.SecureRandom secureRandom = new java.security.SecureRandom();
+        int aleatorio = 1000 + secureRandom.nextInt(9000);
         String codigoOt = "OT-2026-AQP-" + String.format("%05d", aleatorio);
 
         OrdenServicio orden = new OrdenServicio();
@@ -145,7 +144,7 @@ public class OrdenServicioService {
 
         OrdenServicio guardada = ordenServicioRepository.save(orden);
 
-        // Bitácora Inmutable de Auditoría (RF-14)
+        // Bitácora Inmutable de Auditoría 
         if (creador != null) {
             AuditoriaEstadoOt auditoria = new AuditoriaEstadoOt(
                     guardada,
@@ -160,10 +159,9 @@ public class OrdenServicioService {
         return guardada;
     }
 
-    /**
-     * Transición controlada de ciclo de vida de la OT (RF-06, RF-11, RF-14).
-     */
+    /* Transición controlada de ciclo de vida de la OT   */
     @Transactional
+    @CacheEvict(value = "dashboardMetricas", allEntries = true)
     public OrdenServicio actualizarEstado(Integer idOrden, ActualizarEstadoOtRequest request) {
         OrdenServicio orden = obtenerPorId(idOrden);
         String estadoAnterior = orden.getEstado();
@@ -178,7 +176,7 @@ public class OrdenServicioService {
             nuevoEstado = "CERRADA";
         }
 
-        // Validación de Retrabajo Mandatorio (Sección 10.3 / RF-11)
+        // Validación de Retrabajo Mandatorio 
         if ("CONTROL_CALIDAD".equalsIgnoreCase(estadoAnterior) && "EN_REPARACION".equalsIgnoreCase(nuevoEstado)) {
             if (request.getMotivoRetrabajo() == null || request.getMotivoRetrabajo().trim().length() < 10) {
                 throw new IllegalArgumentException("Para registrar un retrabajo desde Control de Calidad es obligatorio ingresar un motivo de al menos 10 caracteres.");
@@ -198,7 +196,7 @@ public class OrdenServicioService {
 
         OrdenServicio actualizada = ordenServicioRepository.save(orden);
 
-        // Registro de Auditoría Inmutable (RF-14)
+        // Registro de Auditoría Inmutable 
         Usuario usuarioCambio = null;
         if (request.getCambiadoPor() != null) {
             usuarioCambio = usuarioRepository.findByUsername(request.getCambiadoPor()).orElse(null);
