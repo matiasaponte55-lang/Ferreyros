@@ -104,7 +104,7 @@ public class OrdenServicioServiceTest {
     @Test
     @DisplayName("Lanzar excepción cuando la orden buscada por ID no existe")
     void testObtenerPorId_NoExiste_LanzaExcepcion() {
-        when(ordenServicioRepository.findById(999)).thenReturn(Optional.empty());
+        when(ordenServicioRepository.findByIdConRelaciones(999)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> {
             ordenServicioService.obtenerPorId(999);
@@ -121,7 +121,7 @@ public class OrdenServicioServiceTest {
         Usuario user = new Usuario();
         user.setUsername("supervisor@ferreyros.com.pe");
 
-        when(ordenServicioRepository.findById(50)).thenReturn(Optional.of(ot));
+        when(ordenServicioRepository.findByIdConRelaciones(50)).thenReturn(Optional.of(ot));
         when(ordenServicioRepository.save(any(OrdenServicio.class))).thenReturn(ot);
         when(usuarioRepository.findAll()).thenReturn(java.util.List.of(user));
 
