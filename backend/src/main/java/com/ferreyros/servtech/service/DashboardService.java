@@ -38,41 +38,12 @@ public class DashboardService {
     public DashboardMetricasDto obtenerMetricas() {
         DashboardMetricasDto dto = new DashboardMetricasDto();
 
-        // Ejecución concurrente en paralelo de las 5 consultas independientes contra la BD
-        CompletableFuture<List<Maquinaria>> futureFlotas = CompletableFuture.supplyAsync(
-                () -> maquinariaRepository.findAllConRelaciones()
-        );
-
-        CompletableFuture<List<Object[]>> futureConteos = CompletableFuture.supplyAsync(
-                () -> ordenServicioRepository.contarPorEstado()
-        );
-
-        CompletableFuture<List<OrdenServicio>> futureCerradas = CompletableFuture.supplyAsync(
-                () -> ordenServicioRepository.findOrdenesCerradasConFechas()
-        );
-
-        CompletableFuture<Long> futureTotalTecnicos = CompletableFuture.supplyAsync(
-                () -> tecnicoRepository.count()
-        );
-
-        CompletableFuture<Long> futureAsignaciones = CompletableFuture.supplyAsync(
-                () -> asignacionRepository.count()
-        );
-
-        // Espera paralela
-        CompletableFuture.allOf(
-                futureFlotas,
-                futureConteos,
-                futureCerradas,
-                futureTotalTecnicos,
-                futureAsignaciones
-        ).join();
-
-        List<Maquinaria> flotas = futureFlotas.join();
-        List<Object[]> conteos = futureConteos.join();
-        List<OrdenServicio> ordenesCerradas = futureCerradas.join();
-        long totalTecnicos = futureTotalTecnicos.join();
-        long asignacionesActivas = futureAsignaciones.join();
+        // Ejecución directa y rápida en una sola conexión reutilizada sin saturar el pool de Supabase
+        List<Maquinaria> flotas = maquinariaRepository.findAllConRelaciones();
+        List<Object[]> conteos = ordenServicioRepository.contarPorEstado();
+        List<OrdenServicio> ordenesCerradas = ordenServicioRepository.findOrdenesCerradasConFechas();
+        long totalTecnicos = tecnicoRepository.count();
+        long asignacionesActivas = asignacionRepository.count();
 
         // Conteo de órdenes agrupadas por estado
         long solicitadas = 0;

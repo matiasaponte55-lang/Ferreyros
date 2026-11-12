@@ -73,15 +73,7 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas: contraseña no válida");
         }
 
-        // Control de Perímetro: Si se especifica un rol requerido, validar que corresponda
-        if (request.getRol() != null && !request.getRol().trim().isEmpty()) {
-            String rolSolicitado = request.getRol().trim();
-            if (!usuario.getRol().equalsIgnoreCase(rolSolicitado) && !usuario.getRol().equals("ROLE_ADMIN")) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
-                        "El rol solicitado no coincide con los permisos asignados en la base de datos");
-            }
-        }
-
+        // El rol oficial se toma directamente del registro autorizado en la base de datos
         String token = jwtUtil.generarToken(usuario.getUsername(), usuario.getRol(), usuario.getNombres() + " " + usuario.getApellidos());
         UsuarioDto userDto = new UsuarioDto(
                 usuario.getIdUsuario(),

@@ -79,7 +79,7 @@
         <button 
           type="submit" 
           :disabled="cargando"
-          class="w-full bg-[#FFCD11] hover:bg-yellow-400 text-black font-extrabold py-3 px-4 rounded-lg shadow-lg hover:shadow-yellow-500/20 transition flex items-center justify-center space-x-2 text-sm tracking-wide mt-2 disabled:opacity-50">
+          class="w-full bg-[#FFCD11] hover:bg-yellow-400 text-black font-extrabold py-3 px-4 rounded-lg shadow-lg hover:shadow-yellow-500/20 transition flex items-center justify-center space-x-2 text-sm tracking-wide mt-2 disabled:opacity-50 cursor-pointer">
           <span v-if="cargando" class="animate-spin mr-2">⚙️</span>
           <span>{{ cargando ? 'VERIFICANDO EN BASE DE DATOS...' : 'INICIAR SESIÓN' }}</span>
         </button>
@@ -122,7 +122,8 @@ const handleLogin = async () => {
   errorMsg.value = ''
   try {
     authStore.cambiarSede(sede.value)
-    await authStore.login(username.value.trim(), password.value, rol.value)
+    // El rol oficial se valida directamente desde la base de datos
+    await authStore.login(username.value.trim(), password.value, rol.value || null)
     router.push('/dashboard')
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
@@ -130,7 +131,7 @@ const handleLogin = async () => {
     } else if (err.response && err.response.status === 401) {
       errorMsg.value = 'Credenciales no válidas. Verifique su usuario y contraseña.'
     } else if (err.response && err.response.status === 403) {
-      errorMsg.value = 'Acceso denegado: el rol seleccionado no coincide con sus credenciales en la base de datos.'
+      errorMsg.value = 'Acceso denegado: cuenta inactiva o sin permisos suficientes en la base de datos.'
     } else {
       errorMsg.value = 'Error al verificar credenciales con la base de datos.'
     }
