@@ -69,7 +69,10 @@ public class CatalogoController {
     }
 
     @GetMapping("/auditoria")
+    @Cacheable("auditoria")
     public ResponseEntity<List<AuditoriaEstadoOt>> listarTodaAuditoria() {
-        return ResponseEntity.ok(auditoriaRepository.findAllByOrderByFechaCambioDesc());
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePublic())
+                .body(auditoriaRepository.findAllConRelaciones());
     }
 }

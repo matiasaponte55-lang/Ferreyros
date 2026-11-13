@@ -191,11 +191,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useCatalogoStore } from '../stores/catalogo'
 import api from '../api/client'
 
-const tecnicos = ref([])
+const catalogoStore = useCatalogoStore()
+const tecnicos = ref(catalogoStore.tecnicos || [])
+const ordenesDisponibles = ref(catalogoStore.ordenes || [])
 const asignaciones = ref([])
-const ordenesDisponibles = ref([])
 const alertaGist = ref(null)
 const showModal = ref(false)
 const guardando = ref(false)
@@ -217,16 +219,16 @@ const formAsignar = ref({
   horaFin: '11:00'
 })
 
-const cargarDatos = async () => {
+const cargarDatos = async (forzar = false) => {
   try {
-    const [resTec, resAsig, resOts] = await Promise.all([
-      api.get('/tecnicos'),
+    const results = await Promise.allSettled([
+      catalogoStore.obtenerTecnicos(forzar),
       api.get('/asignaciones'),
-      api.get('/ordenes-servicio')
+      catalogoStore.obtenerOrdenes(forzar)
     ])
-    tecnicos.value = resTec.data
-    asignaciones.value = resAsig.data
-    ordenesDisponibles.value = resOts.data
+    if (results[0].status === 'fulfilled') tecnicos.value = results[0].value || []
+    if (results[1].status === 'fulfilled') asignaciones.value = results[1].value.data || []
+    if (results[2].status === 'fulfilled') ordenesDisponibles.value = results[2].value || []
   } catch (err) {
     console.error('Error cargando dispatcher:', err)
   }
@@ -252,8 +254,11 @@ const obtenerAsignacion = (idTecnico, slot) => {
   })
 }
 
-const abrirModalAsignacion = (tecnico, slot) => {
+const abrirModalAsignacion = async (tecnico, slot) => {
   errorModal.value = ''
+  if (tecnicos.value.length === 0 || ordenesDisponibles.value.length === 0) {
+    await cargarDatos()
+  }
   formAsignar.value.idTecnico = tecnico ? tecnico.idTecnico : (tecnicos.value[0]?.idTecnico || null)
   formAsignar.value.idOrden = ordenesDisponibles.value[0]?.idOrden || null
   if (slot) {

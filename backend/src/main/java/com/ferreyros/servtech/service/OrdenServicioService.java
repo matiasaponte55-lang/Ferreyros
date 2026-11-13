@@ -8,6 +8,7 @@ import com.ferreyros.servtech.model.*;
 import com.ferreyros.servtech.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ public class OrdenServicioService {
     @Autowired
     private AuditoriaEstadoOtRepository auditoriaRepository;
 
+    @Cacheable(value = "ordenesTodas")
     public List<OrdenServicio> listarOrdenes(String estado, Integer idSede, String prioridad, String buscar) {
         List<OrdenServicio> lista = ordenServicioRepository.findAllConRelaciones();
 
@@ -65,7 +67,7 @@ public class OrdenServicioService {
 
     /* ODT Valida el horometro y actualiza el acumulado de la maquinaria */
     @Transactional
-    @CacheEvict(value = "dashboardMetricas", allEntries = true)
+    @CacheEvict(value = {"dashboardMetricas", "ordenesTodas", "auditoria"}, allEntries = true)
     public OrdenServicio crearOrden(NuevaOrdenRequest request) {
         Maquinaria maquinaria;
         if (request.getIdMaquinaria() != null) {
@@ -161,7 +163,7 @@ public class OrdenServicioService {
 
     /* Transición controlada de ciclo de vida de la OT   */
     @Transactional
-    @CacheEvict(value = "dashboardMetricas", allEntries = true)
+    @CacheEvict(value = {"dashboardMetricas", "ordenesTodas", "auditoria"}, allEntries = true)
     public OrdenServicio actualizarEstado(Integer idOrden, ActualizarEstadoOtRequest request) {
         OrdenServicio orden = obtenerPorId(idOrden);
         String estadoAnterior = orden.getEstado();

@@ -5,6 +5,7 @@ import com.ferreyros.servtech.model.Maquinaria;
 import com.ferreyros.servtech.repository.MaquinariaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -17,6 +18,7 @@ public class MaquinariaService {
     @Autowired
     private MaquinariaRepository maquinariaRepository;
 
+    @Cacheable(value = "maquinariasTodas")
     public List<Maquinaria> listarTodas(String familia, String estado, String buscar) {
         List<Maquinaria> lista = maquinariaRepository.findAllConRelaciones();
 
@@ -47,7 +49,7 @@ public class MaquinariaService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Maquinaria no encontrada con serie PIN: " + pin));
     }
 
-    @CacheEvict(value = "dashboardMetricas", allEntries = true)
+    @CacheEvict(value = {"dashboardMetricas", "maquinariasTodas"}, allEntries = true)
     public Maquinaria guardar(Maquinaria maquinaria) {
         if (maquinaria.getCreadoEn() == null) {
             maquinaria.setCreadoEn(OffsetDateTime.now());

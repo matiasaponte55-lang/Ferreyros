@@ -4,6 +4,8 @@ import com.ferreyros.servtech.exception.RecursoNoEncontradoException;
 import com.ferreyros.servtech.model.Tecnico;
 import com.ferreyros.servtech.repository.TecnicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +17,7 @@ public class TecnicoService {
     @Autowired
     private TecnicoRepository tecnicoRepository;
 
+    @Cacheable(value = "tecnicosTodos")
     public List<Tecnico> listarTodos(String certificacion, String turno) {
         List<Tecnico> lista = tecnicoRepository.findAllConRelaciones();
 
@@ -35,6 +38,7 @@ public class TecnicoService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Técnico no encontrado con ID: " + id));
     }
 
+    @CacheEvict(value = "tecnicosTodos", allEntries = true)
     public Tecnico cambiarEstado(Integer id, String nuevoEstado) {
         Tecnico tecnico = obtenerPorId(id);
         tecnico.setEstadoOperativo(nuevoEstado);

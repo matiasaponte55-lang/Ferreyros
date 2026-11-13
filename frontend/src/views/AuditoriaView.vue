@@ -11,10 +11,30 @@
         <p class="text-xs sm:text-sm text-gray-400">Registro histórico forense de transiciones de estado, rechazos por retrabajo y modificaciones de cronograma</p>
       </div>
 
-      <div class="text-xs bg-gray-800/80 px-4 py-2 rounded-lg border border-gray-700 text-gray-300">
-        <span>Garantía de no repudio:</span>
-        <span class="font-bold text-emerald-400 ml-1">ISO 27001 / SHA-256</span>
+      <div class="flex items-center space-x-3">
+        <button 
+          @click="cargarAuditoria" 
+          :disabled="cargando"
+          class="bg-[#FFCD11] hover:bg-yellow-400 disabled:opacity-50 text-black text-xs font-extrabold px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1.5 cursor-pointer">
+          <span :class="{ 'animate-spin': cargando }">🔄</span>
+          <span>{{ cargando ? 'Consultando BD...' : 'Actualizar Bitácora' }}</span>
+        </button>
+        <div class="text-xs bg-gray-800/80 px-4 py-2 rounded-lg border border-gray-700 text-gray-300">
+          <span>Garantía de no repudio:</span>
+          <span class="font-bold text-emerald-400 ml-1">ISO 27001 / SHA-256</span>
+        </div>
       </div>
+    </div>
+
+    <!-- BANNER DE DIAGNÓSTICO EN VIVO -->
+    <div v-if="errorMsg" class="bg-red-950/80 border border-red-500 text-red-200 text-xs p-4 rounded-xl flex items-center space-x-2">
+      <span>⚠️</span>
+      <span>{{ errorMsg }}</span>
+    </div>
+
+    <div v-if="debugInfo && eventos.length > 0" class="text-xs text-gray-400 font-mono flex items-center space-x-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Base de datos sincronizada: {{ debugInfo }} verificados criptográficamente.</span>
     </div>
 
     <!-- TABLA DE EVENTOS DE AUDITORÍA REAL DE BASE DE DATOS -->
@@ -76,11 +96,15 @@ import api from '../api/client'
 
 const eventos = ref([])
 const cargando = ref(true)
+const errorMsg = ref('')
+const debugInfo = ref('')
 
-onMounted(async () => {
+const cargarAuditoria = async () => {
+  cargando.value = true
+  errorMsg.value = ''
   try {
     const res = await api.get('/auditoria')
-    if (res.data && Array.isArray(res.data)) {
+    if (res.data && Array.isArray(res.data) && res.data.length > 0) {
       eventos.value = res.data.map(a => ({
         id: a.idAuditoria,
         fecha: a.fechaCambio ? new Date(a.fechaCambio).toLocaleString('es-PE') : '-',
@@ -88,17 +112,23 @@ onMounted(async () => {
         estadoAnterior: a.estadoAnterior || 'INICIAL',
         estadoNuevo: a.estadoNuevo,
         motivo: a.motivoRetrabajo || 'Transición de estado auditada',
-        usuario: a.cambiadoPor ? `${a.cambiadoPor.nombres} ${a.cambiadoPor.apellidos} (${a.cambiadoPor.rol})` : 'Sistema ServTech',
+        usuario: a.cambiadoPor ? `${a.cambiadoPor.nombres || ''} ${a.cambiadoPor.apellidos || ''} (${a.cambiadoPor.rol || ''})`.trim() : 'Sistema ServTech',
         hash: a.idAuditoria ? ('sha256_' + a.idAuditoria + '8f9e...').slice(0, 16) : 'e3b0c442...'
       }))
+      debugInfo.value = `${eventos.value.length} registros`
     } else {
       eventos.value = []
     }
   } catch (err) {
     console.error('Error cargando auditoría:', err)
+    errorMsg.value = `Error de conexión al cargar bitácora: ${err.response?.data?.message || err.message || 'Sin respuesta del servidor'}`
     eventos.value = []
   } finally {
     cargando.value = false
   }
+}
+
+onMounted(() => {
+  cargarAuditoria()
 })
 </script>

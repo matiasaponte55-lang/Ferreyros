@@ -6,8 +6,12 @@ import api from '../api/client'
 export const useCatalogoStore = defineStore('catalogo', () => {
   const sedes = ref([])
   const clientes = ref([])
+  const ordenes = ref([])
+  const tecnicos = ref([])
   const metricasDashboard = ref(null)
   const ultimaCargaMetricas = ref(0)
+  const ultimaCargaOrdenes = ref(0)
+  const ultimaCargaTecnicos = ref(0)
 
   // Obtener Sedes con caché en memoria
   const obtenerSedes = async (forzar = false) => {
@@ -39,6 +43,40 @@ export const useCatalogoStore = defineStore('catalogo', () => {
     }
   }
 
+  // Obtener Órdenes con caché en memoria SWR (30s)
+  const obtenerOrdenes = async (forzar = false) => {
+    const ahora = Date.now()
+    if (!forzar && ordenes.value.length > 0 && (ahora - ultimaCargaOrdenes.value < 30000)) {
+      return ordenes.value
+    }
+    try {
+      const res = await api.get('/ordenes-servicio')
+      ordenes.value = res.data || []
+      ultimaCargaOrdenes.value = ahora
+      return ordenes.value
+    } catch (e) {
+      console.error('Error cargando órdenes:', e)
+      return ordenes.value
+    }
+  }
+
+  // Obtener Técnicos con caché en memoria SWR (30s)
+  const obtenerTecnicos = async (forzar = false) => {
+    const ahora = Date.now()
+    if (!forzar && tecnicos.value.length > 0 && (ahora - ultimaCargaTecnicos.value < 30000)) {
+      return tecnicos.value
+    }
+    try {
+      const res = await api.get('/tecnicos')
+      tecnicos.value = res.data || []
+      ultimaCargaTecnicos.value = ahora
+      return tecnicos.value
+    } catch (e) {
+      console.error('Error cargando técnicos:', e)
+      return tecnicos.value
+    }
+  }
+
   // Obtener Métricas del Dashboard con patrón SWR (Stale-While-Revalidate)
   const obtenerMetricas = async (callbackInmediato = null) => {
     const ahora = Date.now()
@@ -64,14 +102,19 @@ export const useCatalogoStore = defineStore('catalogo', () => {
 
   const invalidarDashboard = () => {
     ultimaCargaMetricas.value = 0
+    ultimaCargaOrdenes.value = 0
   }
 
   return {
     sedes,
     clientes,
+    ordenes,
+    tecnicos,
     metricasDashboard,
     obtenerSedes,
     obtenerClientes,
+    obtenerOrdenes,
+    obtenerTecnicos,
     obtenerMetricas,
     invalidarDashboard
   }

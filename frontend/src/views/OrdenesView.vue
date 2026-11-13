@@ -149,20 +149,21 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import api from '../api/client'
+import { useCatalogoStore } from '../stores/catalogo'
 
-const ordenes = ref([])
-const cargando = ref(true)
+const catalogoStore = useCatalogoStore()
+const ordenes = ref(catalogoStore.ordenes || [])
+const cargando = ref(ordenes.value.length === 0)
 
 const filtroBuscar = ref('')
 const filtroEstado = ref('Todas')
 const filtroPrioridad = ref('Todas')
 
-const cargarOrdenes = async () => {
-  cargando.value = true
+const cargarOrdenes = async (forzar = false) => {
+  if (ordenes.value.length === 0) cargando.value = true
   try {
-    const res = await api.get('/ordenes-servicio')
-    ordenes.value = res.data
+    const data = await catalogoStore.obtenerOrdenes(forzar)
+    ordenes.value = data
   } catch (err) {
     console.error('Error cargando órdenes:', err)
   } finally {
