@@ -32,91 +32,123 @@
 
     <!-- MODAL DE SELECCIÓN HISTÓRICA DE PPTX -->
     <div v-if="mostrarModalPPT" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-[#111827] border border-gray-700 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden animate-fade-in">
+      <div class="bg-[#111827] border border-gray-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-fade-in max-h-[92vh] flex flex-col">
         
         <!-- ENCABEZADO DEL MODAL -->
-        <div class="bg-[#161F30] border-b border-gray-800 p-5 flex items-center justify-between">
+        <div class="bg-[#161F30] border-b border-gray-800 p-5 flex items-center justify-between shrink-0">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-[#FFCD11] flex items-center justify-center text-black font-black text-xl shadow-md">
               📊
             </div>
             <div>
               <h2 class="text-lg font-black text-white">EXPORTAR PRESENTACIÓN EJECUTIVA PPTX</h2>
-              <p class="text-xs text-yellow-400 font-semibold font-mono">Consolidación Histórica y Acuerdos MARC (Caterpillar)</p>
+              <p class="text-xs text-yellow-400 font-semibold font-mono">Reportes Multianuales, Anuales y Mensuales MARC (Caterpillar)</p>
             </div>
           </div>
-          <button @click="cerrarModalPPT" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-800 transition">
+          <button @click="cerrarModalPPT" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-800 transition cursor-pointer">
             ✕
           </button>
         </div>
 
         <!-- CUERPO DEL MODAL -->
-        <div class="p-6 space-y-5 text-sm">
+        <div class="p-6 space-y-4 text-sm overflow-y-auto">
           
-          <!-- SELECTOR DE AÑO / PERIODO -->
+          <!-- 1. SELECTOR DE AÑO / PERIODO -->
           <div>
             <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">
-              📅 Seleccionar Año / Periodo Histórico
+              📅 1. Seleccionar Año / Periodo Histórico
             </label>
-            <div class="grid grid-cols-2 gap-2.5">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <button 
                 type="button"
-                @click="anioSeleccionado = '2026'"
-                class="p-3 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer"
+                @click="seleccionarAnio('2026')"
+                class="p-2.5 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer"
                 :class="anioSeleccionado === '2026' ? 'bg-yellow-500/10 border-yellow-400 text-yellow-300 shadow-md ring-1 ring-yellow-400' : 'bg-gray-800/60 border-gray-700 text-gray-300 hover:bg-gray-800'">
                 <div class="flex items-center justify-between">
-                  <span class="font-black text-base">2026 (Actual)</span>
-                  <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-1.5 py-0.5 rounded border border-emerald-500/30">En Vivo</span>
+                  <span class="font-black text-sm">2026</span>
+                  <span class="text-[9px] bg-emerald-500/20 text-emerald-400 font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">En Vivo</span>
                 </div>
-                <span class="text-xs text-gray-400 mt-1">Datos en tiempo real de la base de datos Supabase</span>
+                <span class="text-[11px] text-gray-400 mt-1">256 OTs en BD</span>
               </button>
 
               <button 
                 type="button"
-                @click="anioSeleccionado = '2025'"
-                class="p-3 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer"
+                @click="seleccionarAnio('2025')"
+                class="p-2.5 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer"
                 :class="anioSeleccionado === '2025' ? 'bg-yellow-500/10 border-yellow-400 text-yellow-300 shadow-md ring-1 ring-yellow-400' : 'bg-gray-800/60 border-gray-700 text-gray-300 hover:bg-gray-800'">
                 <div class="flex items-center justify-between">
-                  <span class="font-black text-base">2025</span>
-                  <span class="text-[10px] bg-blue-500/20 text-blue-400 font-bold px-1.5 py-0.5 rounded border border-blue-500/30">Cierre Anual</span>
+                  <span class="font-black text-sm">2025</span>
+                  <span class="text-[9px] bg-blue-500/20 text-blue-400 font-bold px-1.5 py-0.2 rounded border border-blue-500/30">Histórico</span>
                 </div>
-                <span class="text-xs text-gray-400 mt-1">142 OTs, 96.8% disp. y overhauls mayores</span>
+                <span class="text-[11px] text-gray-400 mt-1">294 OTs en BD</span>
               </button>
 
               <button 
                 type="button"
-                @click="anioSeleccionado = '2024'"
-                class="p-3 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer"
+                @click="seleccionarAnio('2024')"
+                class="p-2.5 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer"
                 :class="anioSeleccionado === '2024' ? 'bg-yellow-500/10 border-yellow-400 text-yellow-300 shadow-md ring-1 ring-yellow-400' : 'bg-gray-800/60 border-gray-700 text-gray-300 hover:bg-gray-800'">
                 <div class="flex items-center justify-between">
-                  <span class="font-black text-base">2024</span>
-                  <span class="text-[10px] bg-purple-500/20 text-purple-400 font-bold px-1.5 py-0.5 rounded border border-purple-500/30">Línea Base</span>
+                  <span class="font-black text-sm">2024</span>
+                  <span class="text-[9px] bg-purple-500/20 text-purple-400 font-bold px-1.5 py-0.2 rounded border border-purple-500/30">Línea Base</span>
                 </div>
-                <span class="text-xs text-gray-400 mt-1">128 OTs, 95.2% disp. y matriz MARC inicial</span>
+                <span class="text-[11px] text-gray-400 mt-1">298 OTs en BD</span>
               </button>
 
               <button 
                 type="button"
-                @click="anioSeleccionado = 'MULTIANUAL'"
-                class="p-3 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer"
+                @click="seleccionarAnio('MULTIANUAL')"
+                class="p-2.5 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer"
                 :class="anioSeleccionado === 'MULTIANUAL' ? 'bg-yellow-500/10 border-yellow-400 text-yellow-300 shadow-md ring-1 ring-yellow-400' : 'bg-gray-800/60 border-gray-700 text-gray-300 hover:bg-gray-800'">
                 <div class="flex items-center justify-between">
-                  <span class="font-black text-base">Multianual</span>
-                  <span class="text-[10px] bg-amber-500/20 text-amber-400 font-bold px-1.5 py-0.5 rounded border border-amber-500/30">2024 - 2026</span>
+                  <span class="font-black text-sm">Multianual</span>
+                  <span class="text-[9px] bg-amber-500/20 text-amber-400 font-bold px-1.5 py-0.2 rounded border border-amber-500/30">24 - 26</span>
                 </div>
-                <span class="text-xs text-gray-400 mt-1">Matriz comparativa de evolución trianual</span>
+                <span class="text-[11px] text-gray-400 mt-1">848 OTs totales</span>
               </button>
             </div>
           </div>
 
-          <!-- FILTRO DE SEDE -->
+          <!-- 2. SELECTOR DE MES (DISPONIBLE PARA 2024, 2025 Y 2026) -->
+          <div v-if="anioSeleccionado !== 'MULTIANUAL'" class="bg-gray-900/70 p-3.5 rounded-xl border border-gray-800">
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider">
+                🗓️ 2. Seleccionar Mes de Extracción
+              </label>
+              <button 
+                type="button"
+                @click="mesSeleccionado = 'TODOS'"
+                class="text-[11px] font-bold px-2.5 py-1 rounded-lg transition cursor-pointer"
+                :class="mesSeleccionado === 'TODOS' ? 'bg-[#FFCD11] text-black shadow' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'">
+                ✓ Todo el Año {{ anioSeleccionado }} (Cierre Consolidado)
+              </button>
+            </div>
+
+            <!-- GRILLA DE 12 MESES -->
+            <div class="grid grid-cols-4 sm:grid-cols-6 gap-1.5">
+              <button
+                v-for="m in listaMeses"
+                :key="m.numero"
+                type="button"
+                @click="mesSeleccionado = String(m.numero)"
+                class="p-2 rounded-lg border text-center transition flex flex-col items-center justify-center cursor-pointer"
+                :class="mesSeleccionado === String(m.numero) 
+                  ? 'bg-yellow-500/20 border-yellow-400 text-yellow-300 font-black shadow ring-1 ring-yellow-400' 
+                  : 'bg-gray-800/60 border-gray-700/80 text-gray-300 hover:bg-gray-700/70 hover:text-white'">
+                <span class="text-xs font-bold">{{ m.corto }}</span>
+                <span class="text-[10px] text-gray-400 mt-0.5">{{ obtenerConteoMes(m.numero) }} OTs</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. FILTRO DE SEDE -->
           <div>
             <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5">
-              🏢 Alcance Geográfico / Taller Operativo
+              🏢 3. Alcance Geográfico / Taller Operativo
             </label>
             <select 
               v-model="sedeFiltro" 
-              class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-3.5 py-2.5 outline-none focus:border-yellow-400 text-sm">
+              class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-3.5 py-2.5 outline-none focus:border-yellow-400 text-sm cursor-pointer">
               <option value="TODAS">Todas las Sedes y Faenas Mineras (Consolidado Nacional)</option>
               <option value="Centro de Reparación de Componentes Arequipa - La Joya">Sede Arequipa - CRC La Joya</option>
               <option value="Mina Cerro Verde - Taller Bahía 3">Mina Cerro Verde (Arequipa)</option>
@@ -126,45 +158,54 @@
           </div>
 
           <!-- TARJETA INFORMATIVA DINÁMICA -->
-          <div class="bg-gray-800/50 border border-gray-700/80 p-3.5 rounded-xl text-xs space-y-1">
-            <div class="font-bold text-[#FFCD11] flex items-center space-x-1.5">
-              <span>ℹ️</span>
-              <span>Resumen del Periodo Seleccionado ({{ anioSeleccionado }}):</span>
+          <div class="bg-gray-800/60 border border-gray-700/80 p-3.5 rounded-xl text-xs space-y-1.5">
+            <div class="font-bold text-[#FFCD11] flex items-center justify-between">
+              <div class="flex items-center space-x-1.5">
+                <span>ℹ️</span>
+                <span>Configuración: {{ labelPeriodo }}</span>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                {{ conteoOrdenesPeriodo }} OTs Reales en BD
+              </span>
             </div>
-            <p v-if="anioSeleccionado === '2026'" class="text-gray-300">
-              Se exportará la fotografía operativa en vivo: 15 órdenes de servicio, 7 maquinarias activas, 10 especialistas en turno 14x7 y log forense de auditoría desde Supabase PostgreSQL.
+            <p v-if="anioSeleccionado === 'MULTIANUAL'" class="text-gray-300 leading-relaxed">
+              Se generará la <strong>matriz ejecutiva trianual 2024–2026</strong> analizando la evolución histórica de 848 órdenes, mejora progresiva de disponibilidad física y comparativa de horas facturables en CRC La Joya y minas.
             </p>
-            <p v-else-if="anioSeleccionado === '2025'" class="text-gray-300">
-              Se compilará el informe de cierre anual 2025: 142 órdenes ejecutadas, disponibilidad anual promedio de 96.8% y 1,740 horas hombre facturadas sin penalidades contractuales.
+            <p v-else-if="mesSeleccionado === 'TODOS'" class="text-gray-300 leading-relaxed">
+              Se compilará el <strong>informe de cierre anual {{ anioSeleccionado }}</strong>: {{ conteoOrdenesPeriodo }} órdenes ejecutadas, balance anual de Acuerdos MARC, MTTR acumulado, personal técnico en turno 14x7 y certificación forense SHA-256.
             </p>
-            <p v-else-if="anioSeleccionado === '2024'" class="text-gray-300">
-              Se compilará la auditoría de línea base 2024: 128 órdenes cerradas, disponibilidad anual de 95.2% y cumplimiento inicial de acuerdos MARC.
-            </p>
-            <p v-else class="text-gray-300">
-              Se generará la matriz ejecutiva trianual 2024-2026: comparativa de evolución de disponibilidad (+2.42% mejora), tiempos MTTR y horas hombre totales.
+            <p v-else class="text-gray-300 leading-relaxed">
+              Se compilará el <strong>reporte mensual de {{ obtenerNombreMes(mesSeleccionado) }} {{ anioSeleccionado }}</strong> con {{ conteoOrdenesPeriodo }} órdenes reales desde PostgreSQL Supabase, horas facturables del mes, estado de equipos CAT y auditoría digital.
             </p>
           </div>
 
         </div>
 
         <!-- PIE DEL MODAL -->
-        <div class="bg-[#161F30] border-t border-gray-800 p-4 flex items-center justify-end space-x-3">
-          <button 
-            type="button"
-            @click="cerrarModalPPT"
-            class="px-4 py-2.5 rounded-lg text-xs font-bold text-gray-300 hover:bg-gray-800 transition cursor-pointer">
-            Cancelar
-          </button>
-          
-          <button 
-            type="button"
-            @click="ejecutarDescargaPPT"
-            :disabled="exportandoPPT"
-            class="bg-[#FFCD11] hover:bg-yellow-400 disabled:opacity-50 text-black font-black px-5 py-2.5 rounded-lg text-xs shadow-lg transition flex items-center space-x-2 border border-yellow-300 cursor-pointer">
-            <span v-if="exportandoPPT" class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-            <span v-else>🚀</span>
-            <span>{{ exportandoPPT ? 'Generando Presentación...' : `Generar Presentación PPTX (${anioSeleccionado})` }}</span>
-          </button>
+        <div class="bg-[#161F30] border-t border-gray-800 p-4 flex items-center justify-between shrink-0">
+          <div class="text-[11px] text-gray-400 font-mono">
+            <span>Archivo: </span>
+            <span class="text-yellow-400">{{ nombreArchivoPrevio }}</span>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button 
+              type="button"
+              @click="cerrarModalPPT"
+              class="px-4 py-2.5 rounded-lg text-xs font-bold text-gray-300 hover:bg-gray-800 transition cursor-pointer">
+              Cancelar
+            </button>
+            
+            <button 
+              type="button"
+              @click="ejecutarDescargaPPT"
+              :disabled="exportandoPPT"
+              class="bg-[#FFCD11] hover:bg-yellow-400 disabled:opacity-50 text-black font-black px-5 py-2.5 rounded-lg text-xs shadow-lg transition flex items-center space-x-2 border border-yellow-300 cursor-pointer">
+              <span v-if="exportandoPPT" class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+              <span v-else>🚀</span>
+              <span>{{ exportandoPPT ? 'Generando...' : `Descargar PPTX (${labelPeriodo})` }}</span>
+            </button>
+          </div>
         </div>
 
       </div>
@@ -363,7 +404,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useCatalogoStore } from '../stores/catalogo'
 import { useAuthStore } from '../stores/auth'
 import api from '../api/client'
@@ -379,7 +420,106 @@ const mensajeNotificacion = ref('')
 // Estados reactivos para el modal histórico PPTX
 const mostrarModalPPT = ref(false)
 const anioSeleccionado = ref('2026')
+const mesSeleccionado = ref('TODOS')
 const sedeFiltro = ref('TODAS')
+const ordenesCargadas = ref([])
+
+const listaMeses = [
+  { numero: 1, corto: 'Ene', largo: 'Enero' },
+  { numero: 2, corto: 'Feb', largo: 'Febrero' },
+  { numero: 3, corto: 'Mar', largo: 'Marzo' },
+  { numero: 4, corto: 'Abr', largo: 'Abril' },
+  { numero: 5, corto: 'May', largo: 'Mayo' },
+  { numero: 6, corto: 'Jun', largo: 'Junio' },
+  { numero: 7, corto: 'Jul', largo: 'Julio' },
+  { numero: 8, corto: 'Ago', largo: 'Agosto' },
+  { numero: 9, corto: 'Sep', largo: 'Septiembre' },
+  { numero: 10, corto: 'Oct', largo: 'Octubre' },
+  { numero: 11, corto: 'Nov', largo: 'Noviembre' },
+  { numero: 12, corto: 'Dic', largo: 'Diciembre' }
+]
+
+const seleccionarAnio = (anio) => {
+  anioSeleccionado.value = anio
+  if (anio === 'MULTIANUAL') {
+    mesSeleccionado.value = 'TODOS'
+  }
+}
+
+const obtenerNombreMes = (numMes) => {
+  const m = listaMeses.find(item => String(item.numero) === String(numMes))
+  return m ? m.largo : ''
+}
+
+const obtenerConteoMes = (numMes) => {
+  const lista = ordenesCargadas.value.length > 0 ? ordenesCargadas.value : (catalogoStore.ordenes || [])
+  if (lista.length === 0) return '-'
+  return lista.filter(o => {
+    let f = null
+    if (o.creadoEn) {
+      f = new Date(o.creadoEn)
+    } else if (o.codigoOt) {
+      const match = o.codigoOt.match(/OT-(\d{4})-/)
+      if (match) f = new Date(parseInt(match[1]), 0, 1)
+    }
+    if (!f || isNaN(f.getTime())) return false
+    return String(f.getFullYear()) === String(anioSeleccionado.value) && (f.getMonth() + 1) === numMes
+  }).length
+}
+
+const conteoOrdenesPeriodo = computed(() => {
+  const lista = ordenesCargadas.value.length > 0 ? ordenesCargadas.value : (catalogoStore.ordenes || [])
+  if (lista.length === 0) return 0
+
+  return lista.filter(o => {
+    let f = null
+    if (o.creadoEn) {
+      f = new Date(o.creadoEn)
+    } else if (o.codigoOt) {
+      const match = o.codigoOt.match(/OT-(\d{4})-/)
+      if (match) f = new Date(parseInt(match[1]), 0, 1)
+    }
+
+    if (anioSeleccionado.value !== 'MULTIANUAL' && f && !isNaN(f.getTime())) {
+      if (String(f.getFullYear()) !== String(anioSeleccionado.value)) return false
+    }
+
+    if (anioSeleccionado.value !== 'MULTIANUAL' && mesSeleccionado.value !== 'TODOS' && f && !isNaN(f.getTime())) {
+      if (f.getMonth() + 1 !== parseInt(mesSeleccionado.value, 10)) return false
+    }
+
+    if (sedeFiltro.value !== 'TODAS') {
+      const nomSede = (o.sede?.nombre || '').toLowerCase()
+      const nomFiltro = sedeFiltro.value.toLowerCase()
+      if (!nomSede.includes(nomFiltro) && !nomFiltro.includes(nomSede)) return false
+    }
+
+    return true
+  }).length
+})
+
+const labelPeriodo = computed(() => {
+  if (anioSeleccionado.value === 'MULTIANUAL') {
+    return 'Multianual (2024 - 2026)'
+  }
+  if (mesSeleccionado.value !== 'TODOS') {
+    const nombre = obtenerNombreMes(mesSeleccionado.value)
+    return `${nombre} ${anioSeleccionado.value}`
+  }
+  return `Año ${anioSeleccionado.value}`
+})
+
+const nombreArchivoPrevio = computed(() => {
+  if (anioSeleccionado.value === 'MULTIANUAL') {
+    return 'Ferreyros_ServTech_Presentacion_Multianual_2024_2026.pptx'
+  }
+  if (mesSeleccionado.value !== 'TODOS') {
+    const mNum = String(mesSeleccionado.value).padStart(2, '0')
+    const mNom = obtenerNombreMes(mesSeleccionado.value)
+    return `Ferreyros_ServTech_Presentacion_${anioSeleccionado.value}_${mNum}_${mNom}.pptx`
+  }
+  return `Ferreyros_ServTech_Presentacion_${anioSeleccionado.value}_Anual.pptx`
+})
 
 const cargarMetricas = async () => {
   if (!metricas.value) {
@@ -402,8 +542,19 @@ const cargarMetricas = async () => {
   }
 }
 
-const abrirModalPPT = () => {
+const abrirModalPPT = async () => {
   mostrarModalPPT.value = true
+  // Cargar órdenes en memoria para mostrar conteos exactos por mes en tiempo real
+  if (ordenesCargadas.value.length === 0) {
+    try {
+      const data = await catalogoStore.obtenerOrdenes()
+      if (data && Array.isArray(data)) {
+        ordenesCargadas.value = data
+      }
+    } catch (e) {
+      console.warn('Cargando órdenes para selector PPT:', e)
+    }
+  }
 }
 
 const cerrarModalPPT = () => {
@@ -417,14 +568,14 @@ const ejecutarDescargaPPT = async () => {
     // Consulta en paralelo de los endpoints del backend para obtener la data real completa
     const [resMetricas, resOrdenes, resTecnicos, resAuditoria] = await Promise.allSettled([
       catalogoStore.obtenerMetricas(),
-      api.get('/ordenes-servicio'),
-      api.get('/tecnicos'),
+      catalogoStore.obtenerOrdenes(),
+      catalogoStore.obtenerTecnicos(),
       api.get('/auditoria')
     ])
 
     const dataMetricas = resMetricas.status === 'fulfilled' ? resMetricas.value : metricas.value
-    const dataOrdenes = resOrdenes.status === 'fulfilled' ? resOrdenes.value.data : []
-    const dataTecnicos = resTecnicos.status === 'fulfilled' ? resTecnicos.value.data : []
+    const dataOrdenes = resOrdenes.status === 'fulfilled' ? resOrdenes.value : (ordenesCargadas.value || [])
+    const dataTecnicos = resTecnicos.status === 'fulfilled' ? resTecnicos.value : []
     const dataAuditoria = resAuditoria.status === 'fulfilled' ? resAuditoria.value.data : []
 
     const archivoGenerado = await generarPresentacionEjecutiva({
@@ -434,11 +585,12 @@ const ejecutarDescargaPPT = async () => {
       auditoria: dataAuditoria,
       usuarioActual: authStore.nombreCompleto || 'Administrador Ferreyros',
       anio: anioSeleccionado.value,
+      mes: mesSeleccionado.value,
       sede: sedeFiltro.value
     })
 
     cerrarModalPPT()
-    mensajeNotificacion.value = `¡Presentación (${anioSeleccionado.value}) descargada con éxito: ${archivoGenerado}!`
+    mensajeNotificacion.value = `¡Presentación (${labelPeriodo.value}) descargada con éxito: ${archivoGenerado}!`
     setTimeout(() => {
       mensajeNotificacion.value = ''
     }, 6000)
