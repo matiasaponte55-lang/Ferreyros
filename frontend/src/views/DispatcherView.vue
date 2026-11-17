@@ -223,11 +223,11 @@ const cargarDatos = async (forzar = false) => {
   try {
     const results = await Promise.allSettled([
       catalogoStore.obtenerTecnicos(forzar),
-      api.get('/asignaciones'),
+      catalogoStore.obtenerAsignaciones(forzar),
       catalogoStore.obtenerOrdenes(forzar)
     ])
     if (results[0].status === 'fulfilled') tecnicos.value = results[0].value || []
-    if (results[1].status === 'fulfilled') asignaciones.value = results[1].value.data || []
+    if (results[1].status === 'fulfilled') asignaciones.value = results[1].value || []
     if (results[2].status === 'fulfilled') ordenesDisponibles.value = results[2].value || []
   } catch (err) {
     console.error('Error cargando dispatcher:', err)
@@ -302,7 +302,7 @@ const guardarAsignacion = async () => {
       horaFin: formAsignar.value.horaFin
     })
     showModal.value = false
-    await cargarDatos()
+    await cargarDatos(true)
   } catch (err) {
     // CAPTURA DEL ERROR 409 CONFLICT (SOLAPAMIENTO GIST RF-04)
     if (err.response && err.response.status === 409) {

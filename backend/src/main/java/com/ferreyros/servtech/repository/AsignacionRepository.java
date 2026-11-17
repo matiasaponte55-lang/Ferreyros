@@ -14,6 +14,18 @@ public interface AsignacionRepository extends JpaRepository<Asignacion, Integer>
 
     @Query("SELECT DISTINCT a FROM Asignacion a " +
            "LEFT JOIN FETCH a.orden o " +
+           "LEFT JOIN FETCH o.maquinaria m " +
+           "LEFT JOIN FETCH m.modelo mo " +
+           "LEFT JOIN FETCH o.sede s " +
+           "LEFT JOIN FETCH o.creadoPor cp " +
+           "LEFT JOIN FETCH a.tecnico t " +
+           "LEFT JOIN FETCH t.usuario u " +
+           "LEFT JOIN FETCH t.sedeBase sb " +
+           "ORDER BY a.fechaInicio DESC")
+    List<Asignacion> findAllConRelaciones();
+
+    @Query("SELECT DISTINCT a FROM Asignacion a " +
+           "LEFT JOIN FETCH a.orden o " +
            "LEFT JOIN FETCH o.maquinaria " +
            "LEFT JOIN FETCH a.tecnico t " +
            "LEFT JOIN FETCH t.usuario " +

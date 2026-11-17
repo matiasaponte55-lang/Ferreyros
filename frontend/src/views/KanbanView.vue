@@ -149,10 +149,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useCatalogoStore } from '../stores/catalogo'
 import api from '../api/client'
 
 const authStore = useAuthStore()
-const ordenes = ref([])
+const catalogoStore = useCatalogoStore()
+const ordenes = ref(catalogoStore.ordenes || [])
 const otParaRetrabajo = ref(null)
 const motivoRetrabajo = ref('')
 const procesandoRetrabajo = ref(false)
@@ -166,10 +168,10 @@ const columnas = [
   { estado: 'CERRADA', titulo: 'CERRADA', badgeClass: 'bg-emerald-900/60 text-emerald-300', siguiente: null, siguienteLabel: '' }
 ]
 
-const cargarOrdenes = async () => {
+const cargarOrdenes = async (forzar = false) => {
   try {
-    const res = await api.get('/ordenes-servicio')
-    ordenes.value = res.data
+    const data = await catalogoStore.obtenerOrdenes(forzar)
+    ordenes.value = data || []
   } catch (err) {
     console.error('Error cargando kanban:', err)
   }
@@ -211,7 +213,7 @@ const confirmarRetrabajo = async () => {
     })
     otParaRetrabajo.value.estado = 'EN_REPARACION'
     otParaRetrabajo.value = null
-    await cargarOrdenes()
+    await cargarOrdenes(true)
   } catch (err) {
     alert('Error registrando retrabajo: ' + (err.response?.data?.mensaje || err.message))
   } finally {

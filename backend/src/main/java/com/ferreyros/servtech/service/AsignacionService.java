@@ -7,6 +7,7 @@ import com.ferreyros.servtech.model.*;
 import com.ferreyros.servtech.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +39,9 @@ public class AsignacionService {
     @Autowired
     private AuditoriaEstadoOtRepository auditoriaRepository;
 
+    @Cacheable(value = "asignacionesTodas")
     public List<Asignacion> listarTodas() {
-        return asignacionRepository.findAll();
+        return asignacionRepository.findAllConRelaciones();
     }
 
     public List<Asignacion> listarPorOrden(Integer idOrden) {
@@ -52,7 +54,7 @@ public class AsignacionService {
 
     /* Algoritmo de Asignación y Verificación Horaria con Regla Anti-Solapamiento GiST     */
     @Transactional
-    @CacheEvict(value = "dashboardMetricas", allEntries = true)
+    @CacheEvict(value = {"dashboardMetricas", "asignacionesTodas", "tecnicosTodos", "tecnicosDisponibles", "ordenesTodas", "auditoria"}, allEntries = true)
     public Asignacion asignarCuadrilla(AsignacionRequest request) {
         OrdenServicio orden = ordenServicioRepository.findById(request.getIdOrden())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Orden de servicio no encontrada con ID: " + request.getIdOrden()));

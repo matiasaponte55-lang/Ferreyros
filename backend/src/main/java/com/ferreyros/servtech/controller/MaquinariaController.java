@@ -3,11 +3,13 @@ package com.ferreyros.servtech.controller;
 import com.ferreyros.servtech.model.Maquinaria;
 import com.ferreyros.servtech.service.MaquinariaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Controlador para la gestión del catálogo de maquinaria pesada CAT
@@ -27,7 +29,9 @@ public class MaquinariaController {
             @RequestParam(value = "buscar", required = false) String buscar
     ) {
         List<Maquinaria> lista = maquinariaService.listarTodas(familia, estado, buscar);
-        return ResponseEntity.ok(lista);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePublic())
+                .body(lista);
     }
 
     @GetMapping("/{id}")

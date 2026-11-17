@@ -6,11 +6,13 @@ import com.ferreyros.servtech.model.OrdenServicio;
 import com.ferreyros.servtech.service.OrdenServicioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.validation.Valid;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Controlador REST para Órdenes de Servicio 
@@ -31,7 +33,9 @@ public class OrdenServicioController {
             @RequestParam(value = "buscar", required = false) String buscar
     ) {
         List<OrdenServicio> ordenes = ordenServicioService.listarOrdenes(estado, idSede, prioridad, buscar);
-        return ResponseEntity.ok(ordenes);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(30, TimeUnit.SECONDS).cachePublic())
+                .body(ordenes);
     }
 
     @GetMapping("/{id}")

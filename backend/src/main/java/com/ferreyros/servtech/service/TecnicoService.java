@@ -29,6 +29,7 @@ public class TecnicoService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "tecnicosDisponibles")
     public List<Tecnico> listarDisponibles() {
         return tecnicoRepository.findDisponiblesConRelaciones();
     }
@@ -38,7 +39,7 @@ public class TecnicoService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Técnico no encontrado con ID: " + id));
     }
 
-    @CacheEvict(value = "tecnicosTodos", allEntries = true)
+    @CacheEvict(value = {"tecnicosTodos", "tecnicosDisponibles"}, allEntries = true)
     public Tecnico cambiarEstado(Integer id, String nuevoEstado) {
         Tecnico tecnico = obtenerPorId(id);
         tecnico.setEstadoOperativo(nuevoEstado);

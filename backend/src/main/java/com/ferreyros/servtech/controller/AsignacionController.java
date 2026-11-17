@@ -5,11 +5,13 @@ import com.ferreyros.servtech.model.Asignacion;
 import com.ferreyros.servtech.service.AsignacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.validation.Valid;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /* Controla la asignacion de cuadrillas, y el error HTTP 409 */
 @RestController
@@ -22,8 +24,9 @@ public class AsignacionController {
 
     @GetMapping
     public ResponseEntity<List<Asignacion>> listarTodas() {
-        List<Asignacion> lista = asignacionService.listarTodas();
-        return ResponseEntity.ok(lista);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePublic())
+                .body(asignacionService.listarTodas());
     }
 
     @GetMapping("/orden/{idOrden}")

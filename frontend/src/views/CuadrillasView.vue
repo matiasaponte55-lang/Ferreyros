@@ -118,16 +118,18 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useCatalogoStore } from '../stores/catalogo'
 import api from '../api/client'
 
-const tecnicos = ref([])
+const catalogoStore = useCatalogoStore()
+const tecnicos = ref(catalogoStore.tecnicos || [])
 const filtroNivel = ref('Todas')
 const filtroTurno = ref('Todos')
 
-const cargarTecnicos = async () => {
+const cargarTecnicos = async (forzar = false) => {
   try {
-    const res = await api.get('/tecnicos')
-    tecnicos.value = res.data
+    const data = await catalogoStore.obtenerTecnicos(forzar)
+    tecnicos.value = data || []
   } catch (err) {
     console.error('Error cargando técnicos:', err)
   }
@@ -156,6 +158,7 @@ const conmutarEstado = async (tecnico) => {
   try {
     await api.patch(`/tecnicos/${tecnico.idTecnico}/estado?nuevoEstado=${nuevo}`)
     tecnico.estadoDisponibilidad = nuevo
+    await cargarTecnicos(true)
   } catch (err) {
     console.error('Error cambiando estado técnico:', err)
   }

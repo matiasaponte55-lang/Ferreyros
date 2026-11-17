@@ -3,11 +3,13 @@ package com.ferreyros.servtech.controller;
 import com.ferreyros.servtech.model.Tecnico;
 import com.ferreyros.servtech.service.TecnicoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Controlador de cuadrillas técnicas, turnos mineros 14x7 y competencias CAT
@@ -26,13 +28,17 @@ public class TecnicoController {
             @RequestParam(value = "turno", required = false) String turno
     ) {
         List<Tecnico> lista = tecnicoService.listarTodos(certificacion, turno);
-        return ResponseEntity.ok(lista);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePublic())
+                .body(lista);
     }
 
     @GetMapping("/disponibles")
     public ResponseEntity<List<Tecnico>> listarDisponibles() {
         List<Tecnico> disponibles = tecnicoService.listarDisponibles();
-        return ResponseEntity.ok(disponibles);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS).cachePublic())
+                .body(disponibles);
     }
 
     @GetMapping("/{id}")

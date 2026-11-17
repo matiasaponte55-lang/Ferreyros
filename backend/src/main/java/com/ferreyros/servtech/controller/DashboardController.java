@@ -3,8 +3,11 @@ package com.ferreyros.servtech.controller;
 import com.ferreyros.servtech.dto.DashboardMetricasDto;
 import com.ferreyros.servtech.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 /* Ayuda a obtener métricas y KPIs de la operación de forma dinámica */
 @RestController
@@ -18,6 +21,8 @@ public class DashboardController {
     @GetMapping("/dashboard/metricas")
     public ResponseEntity<DashboardMetricasDto> obtenerMetricas() {
         DashboardMetricasDto metricas = dashboardService.obtenerMetricas();
-        return ResponseEntity.ok(metricas);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(30, TimeUnit.SECONDS).cachePublic())
+                .body(metricas);
     }
 }

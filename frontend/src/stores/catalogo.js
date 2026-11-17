@@ -9,9 +9,11 @@ export const useCatalogoStore = defineStore('catalogo', () => {
   const ordenes = ref([])
   const tecnicos = ref([])
   const metricasDashboard = ref(null)
+  const asignaciones = ref([])
   const ultimaCargaMetricas = ref(0)
   const ultimaCargaOrdenes = ref(0)
   const ultimaCargaTecnicos = ref(0)
+  const ultimaCargaAsignaciones = ref(0)
 
   // Obtener Sedes con caché en memoria
   const obtenerSedes = async (forzar = false) => {
@@ -100,9 +102,31 @@ export const useCatalogoStore = defineStore('catalogo', () => {
     }
   }
 
+  // Obtener Asignaciones con caché en memoria SWR (30s)
+  const obtenerAsignaciones = async (forzar = false) => {
+    const ahora = Date.now()
+    if (!forzar && asignaciones.value.length > 0 && (ahora - ultimaCargaAsignaciones.value < 30000)) {
+      return asignaciones.value
+    }
+    try {
+      const res = await api.get('/asignaciones')
+      asignaciones.value = res.data || []
+      ultimaCargaAsignaciones.value = ahora
+      return asignaciones.value
+    } catch (e) {
+      console.error('Error cargando asignaciones:', e)
+      return asignaciones.value
+    }
+  }
+
   const invalidarDashboard = () => {
     ultimaCargaMetricas.value = 0
     ultimaCargaOrdenes.value = 0
+    ultimaCargaAsignaciones.value = 0
+  }
+
+  const invalidarAsignaciones = () => {
+    ultimaCargaAsignaciones.value = 0
   }
 
   return {
@@ -110,12 +134,15 @@ export const useCatalogoStore = defineStore('catalogo', () => {
     clientes,
     ordenes,
     tecnicos,
+    asignaciones,
     metricasDashboard,
     obtenerSedes,
     obtenerClientes,
     obtenerOrdenes,
     obtenerTecnicos,
+    obtenerAsignaciones,
     obtenerMetricas,
-    invalidarDashboard
+    invalidarDashboard,
+    invalidarAsignaciones
   }
 })
