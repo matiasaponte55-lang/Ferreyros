@@ -589,8 +589,22 @@ const ejecutarDescargaPPT = async () => {
       sede: sedeFiltro.value
     })
 
+    // Despachar alerta de correo vía Jakarta Mail (asíncrono en backend)
+    try {
+      api.post('/notificaciones/reporte', {
+        tipoReporte: 'PPTX',
+        nombreReporte: archivoGenerado,
+        solicitadoPor: authStore.nombreCompleto || 'Administrador Ferreyros',
+        correoSolicitante: authStore.usuario || 'usuario@ferreyros.com.pe',
+        sede: sedeFiltro.value === 'TODAS' ? 'Consolidado Nacional' : sedeFiltro.value,
+        detalles: `Periodo: ${labelPeriodo.value} | ${conteoOrdenesPeriodo.value} órdenes evaluadas`
+      }).catch(err => console.warn('Notificación diferida:', err))
+    } catch (e) {
+      // Ignorar para garantizar que la descarga nunca se interrumpa
+    }
+
     cerrarModalPPT()
-    mensajeNotificacion.value = `¡Presentación (${labelPeriodo.value}) descargada con éxito: ${archivoGenerado}!`
+    mensajeNotificacion.value = `¡Presentación (${labelPeriodo.value}) descargada con éxito: ${archivoGenerado} (Alerta enviada a correo)!`
     setTimeout(() => {
       mensajeNotificacion.value = ''
     }, 6000)
@@ -611,9 +625,29 @@ const exportarReporte = () => {
   const blob = new Blob([cabeceras + filas], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
+  const nombreCsv = `Reporte_Ejecutivo_MARC_Ferreyros_${new Date().toISOString().slice(0, 10)}.csv`
   a.href = url
-  a.download = `Reporte_Ejecutivo_MARC_Ferreyros_${new Date().toISOString().slice(0, 10)}.csv`
+  a.download = nombreCsv
   a.click()
+
+  // Despachar alerta de correo vía Jakarta Mail (asíncrono en backend)
+  try {
+    api.post('/notificaciones/reporte', {
+      tipoReporte: 'CSV',
+      nombreReporte: nombreCsv,
+      solicitadoPor: authStore.nombreCompleto || 'Administrador Ferreyros',
+      correoSolicitante: authStore.usuario || 'usuario@ferreyros.com.pe',
+      sede: 'Consolidado Nacional',
+      detalles: `Exportación de estado de flota y cumplimiento de SLA MARC (${metricas.value?.flotas?.length || 0} equipos)`
+    }).catch(err => console.warn('Notificación diferida:', err))
+  } catch (e) {
+    // Ignorar para garantizar que la descarga nunca se interrumpa
+  }
+
+  mensajeNotificacion.value = `¡Reporte CSV descargado con éxito (${nombreCsv}) y alerta notificada!`
+  setTimeout(() => {
+    mensajeNotificacion.value = ''
+  }, 5000)
 }
 
 onMounted(() => {

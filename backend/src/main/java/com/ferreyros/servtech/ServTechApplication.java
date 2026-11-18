@@ -3,10 +3,12 @@ package com.ferreyros.servtech;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /* SISTEMA WEB SERVTECH 2026 - FERREYROS S.A.*/
 @SpringBootApplication
 @EnableCaching
+@EnableAsync
 public class ServTechApplication {
 
     public static void main(String[] args) {

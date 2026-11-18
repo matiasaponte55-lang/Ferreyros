@@ -199,6 +199,21 @@ const totalRepuestos = computed(() => {
 
 const imprimirActa = () => {
   window.print()
+
+  // Despachar alerta de correo vía Jakarta Mail (asíncrono en backend)
+  try {
+    const codOt = orden.value?.codigoOt || 'OT'
+    api.post('/notificaciones/reporte', {
+      tipoReporte: 'PDF',
+      nombreReporte: `Acta_Liquidacion_${codOt}.pdf`,
+      solicitadoPor: authStore.nombreCompleto || 'Administrador Ferreyros',
+      correoSolicitante: authStore.usuario || 'usuario@ferreyros.com.pe',
+      sede: orden.value?.sede?.nombre || 'Taller CRC La Joya',
+      detalles: `Emisión de Acta Técnica de Liquidación y Conformidad MARC para la orden ${codOt} (Equipo: ${orden.value?.maquinaria?.modeloCat || 'CAT'})`
+    }).catch(err => console.warn('Notificación de acta PDF diferida:', err))
+  } catch (e) {
+    // Ignorar para no interrumpir el diálogo de impresión
+  }
 }
 
 const liquidarServicio = async () => {
