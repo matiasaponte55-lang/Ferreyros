@@ -132,6 +132,7 @@
                   ATS Tablet
                 </router-link>
                 <router-link 
+                  v-if="authStore.puedeEmitirReportes"
                   :to="`/liquidacion/${ot.idOrden}`" 
                   class="bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 px-2 py-1 rounded text-xs font-semibold transition inline-block">
                   PDF Final
@@ -150,7 +151,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useCatalogoStore } from '../stores/catalogo'
+import { useAuthStore } from '../stores/auth'
 
+const authStore = useAuthStore()
 const catalogoStore = useCatalogoStore()
 const ordenes = ref(catalogoStore.ordenes || [])
 const cargando = ref(ordenes.value.length === 0)

@@ -13,6 +13,7 @@
 
       <div class="flex items-center space-x-3">
         <button 
+          v-if="authStore.puedeEmitirReportes"
           @click="imprimirActa"
           class="bg-gray-800 hover:bg-gray-700 text-yellow-400 border border-gray-700 font-bold px-4 py-2.5 rounded-lg text-sm shadow transition flex items-center space-x-2">
           <span>🖨️</span>

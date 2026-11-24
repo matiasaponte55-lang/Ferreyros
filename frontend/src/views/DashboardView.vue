@@ -11,7 +11,7 @@
         <p class="text-xs sm:text-sm text-gray-400">Supervisión en tiempo real de disponibilidad mecánica, MTTR y cumplimiento de penalidades contractuales</p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2 self-start md:self-auto">
+      <div v-if="authStore.puedeEmitirReportes" class="flex flex-wrap items-center gap-2 self-start md:self-auto">
         <button 
           @click="abrirModalPPT"
           :disabled="cargando"

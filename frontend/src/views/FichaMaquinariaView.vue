@@ -145,8 +145,10 @@
               </td>
               <td class="py-3 px-3 text-center space-x-1">
                 <router-link :to="`/inspeccion/${ot.idOrden}`" class="text-xs text-yellow-400 hover:underline">ATS</router-link>
-                <span class="text-gray-600">|</span>
-                <router-link :to="`/liquidacion/${ot.idOrden}`" class="text-xs text-emerald-400 hover:underline">Acta PDF</router-link>
+                <template v-if="authStore.puedeEmitirReportes">
+                  <span class="text-gray-600">|</span>
+                  <router-link :to="`/liquidacion/${ot.idOrden}`" class="text-xs text-emerald-400 hover:underline">Acta PDF</router-link>
+                </template>
               </td>
             </tr>
           </tbody>
@@ -160,8 +162,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 import api from '../api/client'
 
+const authStore = useAuthStore()
 const route = useRoute()
 const maquinaria = ref(null)
 const historialOts = ref([])
