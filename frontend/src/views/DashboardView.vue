@@ -591,6 +591,7 @@ const ejecutarDescargaPPT = async () => {
         tipoReporte: 'PPTX',
         nombreReporte: archivoGenerado,
         solicitadoPor: authStore.nombreCompleto || 'Administrador Ferreyros',
+        rolSolicitante: authStore.rol,
         correoSolicitante: authStore.usuario || 'usuario@ferreyros.com.pe',
         sede: sedeFiltro.value === 'TODAS' ? 'Consolidado Nacional' : sedeFiltro.value,
         detalles: `Periodo: ${labelPeriodo.value} | ${conteoOrdenesPeriodo.value} órdenes evaluadas`
@@ -632,6 +633,7 @@ const exportarReporte = () => {
       tipoReporte: 'CSV',
       nombreReporte: nombreCsv,
       solicitadoPor: authStore.nombreCompleto || 'Administrador Ferreyros',
+      rolSolicitante: authStore.rol,
       correoSolicitante: authStore.usuario || 'usuario@ferreyros.com.pe',
       sede: 'Consolidado Nacional',
       detalles: `Exportación de estado de flota y cumplimiento de SLA MARC (${metricas.value?.flotas?.length || 0} equipos)`
