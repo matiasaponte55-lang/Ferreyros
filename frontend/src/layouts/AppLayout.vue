@@ -21,15 +21,10 @@
 
           <!-- CONTROLES CENTRALES: SEDE E INDICADOR DE ROL OPERATIVO AUTENTICADO -->
           <div class="hidden md:flex items-center space-x-4">
-            <!-- Selector de Sede Operativa -->
-            <div class="flex items-center space-x-2 bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 text-xs">
+            <!-- Sede Operativa Fija (Mina Cerro Verde) -->
+            <div class="flex items-center space-x-2 bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 text-xs shadow-inner">
               <span class="text-yellow-400 font-bold">📍 Sede:</span>
-              <select v-model="authStore.currentSede" class="bg-transparent text-gray-200 outline-none cursor-pointer font-medium">
-                <option value="Centro de Reparación de Componentes Arequipa - La Joya" class="bg-gray-800">Sede Arequipa - CRC La Joya</option>
-                <option value="Mina Cerro Verde - Taller Bahía 3" class="bg-gray-800">Mina Cerro Verde (Arequipa)</option>
-                <option value="Mina Las Bambas - Taller Chalcobamba" class="bg-gray-800">Mina Las Bambas (Apurímac)</option>
-                <option value="Mina Cuajone - Bahía de Mantenimiento Botiflaca" class="bg-gray-800">Mina Cuajone (Moquegua)</option>
-              </select>
+              <span class="text-gray-200 font-semibold tracking-wide">Mina Cerro Verde (Arequipa)</span>
             </div>
 
             <!-- Perfil / Rol Oficial Asignado en BD -->
@@ -137,7 +132,7 @@
     <!-- PIE DE PÁGINA CORPORATIVO -->
     <footer class="bg-[#111827] border-t border-gray-800 py-4 text-center text-xs text-gray-500 no-print">
       <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between">
-        <p>© 2026 Ferreyros S.A. • ServTech 2026 - Centro de Reparación de Componentes (CRC Arequipa - La Joya)</p>
+        <p>© 2026 Ferreyros S.A. • ServTech 2026 - Taller Mina Cerro Verde (Arequipa)</p>
         <p class="mt-1 sm:mt-0 text-gray-400 font-medium">Curso Integrador Sistemas Software • UTP</p>
       </div>
     </footer>
@@ -159,9 +154,28 @@ const cerrarSesion = () => {
 
 <style scoped>
 .nav-tab {
-  @apply px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold text-gray-300 hover:text-white hover:bg-gray-800/80 transition whitespace-nowrap flex items-center space-x-1 border border-transparent;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  white-space: nowrap;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid transparent;
 }
+
+.nav-tab:hover {
+  color: #FFFFFF;
+  background-color: rgba(31, 41, 55, 0.6);
+  border-color: rgba(75, 85, 99, 0.4);
+}
+
 .nav-tab.active {
-  @apply bg-[#FFCD11] text-black border-yellow-400 shadow;
+  color: #000000;
+  background-color: #FFCD11;
+  font-weight: 700;
+  box-shadow: 0 4px 6px -1px rgba(255, 205, 17, 0.2);
 }
 </style>

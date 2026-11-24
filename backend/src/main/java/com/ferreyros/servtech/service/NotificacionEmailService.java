@@ -102,9 +102,17 @@ public class NotificacionEmailService {
             helper.setFrom(remitenteCorreo, remitenteNombre);
             helper.setTo(destinatario);
 
-            String asunto = String.format("📊 [Ferreyros ServTech] Alerta de Generación de Reporte %s (%s)",
-                    dto.getTipoReporte().toUpperCase(),
-                    dto.getSolicitadoPor() != null ? dto.getSolicitadoPor() : "Usuario");
+            String tipo = dto.getTipoReporte() != null ? dto.getTipoReporte().toUpperCase() : "REPORTE";
+            String icono = switch (tipo) {
+                case "PPTX" -> "📊";
+                case "CSV" -> "📥";
+                case "PDF" -> "📄";
+                default -> "📑";
+            };
+            String solicitante = dto.getSolicitadoPor() != null ? dto.getSolicitadoPor() : "Usuario";
+            String nombreArch = dto.getNombreReporte() != null ? dto.getNombreReporte() : tipo;
+            String asunto = String.format("%s [Ferreyros ServTech] Reporte %s: %s (Solicitado por: %s)",
+                    icono, tipo, nombreArch, solicitante);
             helper.setSubject(asunto);
 
             String html = generarCuerpoHtml(dto, destinatario);
@@ -147,9 +155,9 @@ public class NotificacionEmailService {
             .subtitle { font-size: 11px; color: #9CA3AF; margin: 3px 0 0 0; text-transform: uppercase; letter-spacing: 0.5px; }
             .content { padding: 24px; font-size: 13px; line-height: 1.6; color: #D1D5DB; }
             .alert-box { background-color: #1F2937; border-left: 4px solid #FFCD11; border-radius: 6px; padding: 14px; margin-bottom: 20px; }
-            .table-info { width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #161F30; border-radius: 8px; overflow: hidden; border: 1px solid #374151; }
+            .table-info { width: 100%%; border-collapse: collapse; margin-top: 15px; background-color: #161F30; border-radius: 8px; overflow: hidden; border: 1px solid #374151; }
             .table-info td { padding: 10px 14px; border-bottom: 1px solid #283548; font-size: 12px; }
-            .table-info td.label { font-weight: bold; color: #9CA3AF; width: 35%; text-transform: uppercase; font-size: 11px; }
+            .table-info td.label { font-weight: bold; color: #9CA3AF; width: 35%%; text-transform: uppercase; font-size: 11px; }
             .table-info td.val { color: #FFFFFF; font-weight: 600; }
             .badge-report { display: inline-block; padding: 3px 8px; border-radius: 4px; font-weight: 900; font-size: 11px; }
             .hash-box { margin-top: 20px; background-color: #0B1320; border: 1px dashed #4B5563; padding: 10px 14px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 11px; color: #10B981; word-break: break-all; }
@@ -191,6 +199,10 @@ public class NotificacionEmailService {
                   <td class="val">%s</td>
                 </tr>
                 <tr>
+                  <td class="label">Nivel de Privilegios (RBAC):</td>
+                  <td class="val" style="color: #6EE7B7;">%s</td>
+                </tr>
+                <tr>
                   <td class="label">Centro Operativo / Sede:</td>
                   <td class="val">%s</td>
                 </tr>
@@ -227,6 +239,7 @@ public class NotificacionEmailService {
                 dto.getTipoReporte().toUpperCase(),
                 dto.getNombreReporte() != null ? dto.getNombreReporte() : "Reporte Oficial Ferreyros",
                 dto.getSolicitadoPor() != null ? dto.getSolicitadoPor() : "Usuario del Sistema",
+                dto.getRolSolicitante() != null ? dto.getRolSolicitante() : "ROLE_ADMIN (Privilegiado)",
                 dto.getSede() != null ? dto.getSede() : "Consolidado Nacional (Todas las Sedes)",
                 fechaHora,
                 dto.getDetalles() != null ? dto.getDetalles() : "Mantenimiento de flota pesada Caterpillar y acuerdos MARC",

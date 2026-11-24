@@ -121,7 +121,7 @@ const agregarEncabezadoCorporativo = (slide, numeroSeccion, titulo, subtitulo, p
     line: { color: BRAND.BORDER, width: 0.6 }
   })
 
-  slide.addText(`CONFIDENCIAL — Ferreyros S.A. | Periodo: ${periodoLabel} | Taller CRC La Joya & Faenas Mineras MARC`, {
+  slide.addText(`CONFIDENCIAL — Ferreyros S.A. | Periodo: ${periodoLabel} | Mina Cerro Verde & Faenas Mineras MARC`, {
     x: 0.6,
     y: 5.3,
     w: 7.2,
@@ -828,7 +828,7 @@ export async function generarPresentacionEjecutiva({
       { text: f.codigoFlota || `CAT-0${idx + 1}`, options: { fill: bg, color: BRAND.CAT_YELLOW, bold: true, fontSize: 8, align: 'center' } },
       { text: f.modeloCat || 'CAT 793F', options: { fill: bg, color: BRAND.TEXT_WHITE, fontSize: 8 } },
       { text: f.cliente || 'Minera Las Bambas S.A.', options: { fill: bg, color: BRAND.TEXT_MUTED, fontSize: 8 } },
-      { text: f.sede || 'CRC La Joya', options: { fill: bg, color: BRAND.TEXT_WHITE, fontSize: 7.5 } },
+      { text: f.sede || 'Mina Cerro Verde', options: { fill: bg, color: BRAND.TEXT_WHITE, fontSize: 7.5 } },
       { text: `${Number(f.horometro).toLocaleString('es-PE', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} hrs`, options: { fill: bg, color: BRAND.TEXT_WHITE, fontSize: 7.5, align: 'right' } },
       { text: `${Number(f.disponibilidad).toFixed(1)}%`, options: { fill: bg, color: colorCond, bold: true, fontSize: 8, align: 'center' } },
       { text: `${Number(f.slaMarc).toFixed(1)}%`, options: { fill: bg, color: BRAND.TEXT_WHITE, fontSize: 8, align: 'center' } },
@@ -894,7 +894,7 @@ export async function generarPresentacionEjecutiva({
     const nom = t.usuario ? `${t.usuario.nombres} ${t.usuario.apellidos}` : 'Técnico Especializado CAT'
     const esp = t.especialidadPrincipal || 'Diagnóstico Electrónico'
     const niv = t.nivelCertificacion || 'Level 2'
-    const sedeNom = t.sedeBase?.nombre || 'CRC La Joya'
+    const sedeNom = t.sedeBase?.nombre || 'Mina Cerro Verde'
     const turno = t.turnoAsignado || '14X7_DIURNO'
     const est = t.estadoDisponibilidad || t.estadoOperativo || 'DISPONIBLE'
     const colorEst = est === 'DISPONIBLE' ? BRAND.SUCCESS : BRAND.CAT_YELLOW
@@ -1108,7 +1108,7 @@ export async function generarPresentacionEjecutiva({
       { text: 'PROGRAMADA', options: { fill: BRAND.SURFACE, color: BRAND.TEXT_MUTED, fontSize: 7.5, align: 'center' } },
       { text: 'ASIGNADA', options: { fill: BRAND.SURFACE, color: BRAND.SUCCESS, bold: true, fontSize: 7.5, align: 'center' } },
       { text: 'ivan.mamani@ferreyros.com.pe', options: { fill: BRAND.SURFACE, color: BRAND.TEXT_WHITE, fontSize: 7.5 } },
-      { text: 'Asignación de cuadrilla técnica diurna en CRC La Joya', options: { fill: BRAND.SURFACE, color: BRAND.TEXT_MUTED, fontSize: 7.5 } }
+      { text: 'Asignación de cuadrilla técnica diurna en Mina Cerro Verde', options: { fill: BRAND.SURFACE, color: BRAND.TEXT_MUTED, fontSize: 7.5 } }
     ],
     [
       { text: `OT-${anio}-01035`, options: { fill: BRAND.SURFACE_LIGHT, color: BRAND.CAT_YELLOW, bold: true, fontSize: 8, align: 'center' } },

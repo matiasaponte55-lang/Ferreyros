@@ -23,6 +23,7 @@ class NotificacionEmailServiceTest {
                 "PPTX",
                 "Ferreyros_ServTech_Presentacion_2026_10_Octubre.pptx",
                 "Ivan Mamani",
+                "ROLE_ADMIN",
                 "ivan.mamani@ferreyros.com.pe",
                 "Sede Arequipa - CRC La Joya",
                 "Reporte mensual de disponibilidad MARC 97.6%"
@@ -43,6 +44,7 @@ class NotificacionEmailServiceTest {
                 "CSV",
                 "Reporte_Ejecutivo_MARC_Ferreyros_2026-11-18.csv",
                 "Matias Aponte",
+                "ROLE_PLANIFICADOR",
                 "maponte@ferreyros.com.pe",
                 "Mina Cerro Verde",
                 "Exportación de flota y horómetros acumulados"
@@ -56,6 +58,7 @@ class NotificacionEmailServiceTest {
                 "PDF",
                 "Acta_Liquidacion_OT-2026-AQP-03801.pdf",
                 "Jorge Zamata",
+                "ROLE_SUPERVISOR",
                 "jzamata@ferreyros.com.pe",
                 "CRC La Joya",
                 "Acta técnica de liquidación y conformidad"

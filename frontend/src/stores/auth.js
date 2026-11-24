@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('servtech_token') || null,
     user: JSON.parse(localStorage.getItem('servtech_user') || 'null'),
-    currentSede: localStorage.getItem('servtech_sede') || 'Centro de Reparación de Componentes Arequipa - La Joya'
+    currentSede: localStorage.getItem('servtech_sede') || 'Mina Cerro Verde - Taller Bahía 3'
   }),
 
   getters: {
@@ -16,7 +16,8 @@ export const useAuthStore = defineStore('auth', {
     isAdmin: (state) => state.user?.rol === 'ROLE_ADMIN',
     isPlanificador: (state) => state.user?.rol === 'ROLE_PLANIFICADOR' || state.user?.rol === 'ROLE_ADMIN',
     isSupervisor: (state) => state.user?.rol === 'ROLE_SUPERVISOR' || state.user?.rol === 'ROLE_ADMIN',
-    isTecnico: (state) => state.user?.rol === 'ROLE_TECNICO'
+    isTecnico: (state) => state.user?.rol === 'ROLE_TECNICO',
+    puedeEmitirReportes: (state) => ['ROLE_ADMIN', 'ROLE_PLANIFICADOR', 'ROLE_SUPERVISOR'].includes(state.user?.rol)
   },
 
   actions: {
@@ -34,16 +35,18 @@ export const useAuthStore = defineStore('auth', {
 
       this.token = response.data.token
       this.user = response.data.user
+      this.currentSede = 'Mina Cerro Verde - Taller Bahía 3'
       
       localStorage.setItem('servtech_token', this.token)
       localStorage.setItem('servtech_user', JSON.stringify(this.user))
+      localStorage.setItem('servtech_sede', this.currentSede)
       
       return { success: true }
     },
 
     cambiarSede(nuevaSede) {
-      this.currentSede = nuevaSede
-      localStorage.setItem('servtech_sede', nuevaSede)
+      this.currentSede = nuevaSede || 'Mina Cerro Verde - Taller Bahía 3'
+      localStorage.setItem('servtech_sede', this.currentSede)
     },
 
     logout() {

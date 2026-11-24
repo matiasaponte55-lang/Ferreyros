@@ -13,6 +13,7 @@ public class SolicitudReporteDto {
 
     private String nombreReporte;
     private String solicitadoPor;
+    private String rolSolicitante;
     private String correoSolicitante;
     private String correoDestino;
     private String sede;
@@ -20,10 +21,11 @@ public class SolicitudReporteDto {
 
     public SolicitudReporteDto() {}
 
-    public SolicitudReporteDto(String tipoReporte, String nombreReporte, String solicitadoPor, String correoDestino, String sede, String detalles) {
+    public SolicitudReporteDto(String tipoReporte, String nombreReporte, String solicitadoPor, String rolSolicitante, String correoDestino, String sede, String detalles) {
         this.tipoReporte = tipoReporte;
         this.nombreReporte = nombreReporte;
         this.solicitadoPor = solicitadoPor;
+        this.rolSolicitante = rolSolicitante;
         this.correoDestino = correoDestino;
         this.sede = sede;
         this.detalles = detalles;
@@ -51,6 +53,14 @@ public class SolicitudReporteDto {
 
     public void setSolicitadoPor(String solicitadoPor) {
         this.solicitadoPor = solicitadoPor;
+    }
+
+    public String getRolSolicitante() {
+        return rolSolicitante;
+    }
+
+    public void setRolSolicitante(String rolSolicitante) {
+        this.rolSolicitante = rolSolicitante;
     }
 
     public String getCorreoSolicitante() {

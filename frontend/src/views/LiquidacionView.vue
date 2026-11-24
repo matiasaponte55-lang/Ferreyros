@@ -208,7 +208,7 @@ const imprimirActa = () => {
       nombreReporte: `Acta_Liquidacion_${codOt}.pdf`,
       solicitadoPor: authStore.nombreCompleto || 'Administrador Ferreyros',
       correoSolicitante: authStore.usuario || 'usuario@ferreyros.com.pe',
-      sede: orden.value?.sede?.nombre || 'Taller CRC La Joya',
+      sede: orden.value?.sede?.nombre || 'Mina Cerro Verde - Taller Bahía 3',
       detalles: `Emisión de Acta Técnica de Liquidación y Conformidad MARC para la orden ${codOt} (Equipo: ${orden.value?.maquinaria?.modeloCat || 'CAT'})`
     }).catch(err => console.warn('Notificación de acta PDF diferida:', err))
   } catch (e) {

@@ -149,11 +149,7 @@
             <select 
               v-model="sedeFiltro" 
               class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-3.5 py-2.5 outline-none focus:border-yellow-400 text-sm cursor-pointer">
-              <option value="TODAS">Todas las Sedes y Faenas Mineras (Consolidado Nacional)</option>
-              <option value="Centro de Reparación de Componentes Arequipa - La Joya">Sede Arequipa - CRC La Joya</option>
               <option value="Mina Cerro Verde - Taller Bahía 3">Mina Cerro Verde (Arequipa)</option>
-              <option value="Mina Las Bambas - Taller Chalcobamba">Mina Las Bambas (Apurímac)</option>
-              <option value="Mina Cuajone - Bahía Botiflaca">Mina Cuajone (Moquegua)</option>
             </select>
           </div>
 

@@ -51,31 +51,6 @@
           />
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">PERFIL / ROL OPERATIVO</label>
-          <select 
-            v-model="rol"
-            class="w-full bg-[#1F2937] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#FFCD11] transition cursor-pointer">
-            <option value="">Autodetectar según credenciales en BD</option>
-            <option value="ROLE_SUPERVISOR">Supervisor de Mantenimiento & Despacho</option>
-            <option value="ROLE_PLANIFICADOR">Planificador de Servicios & Contratos MARC</option>
-            <option value="ROLE_TECNICO">Técnico Mecánico de Campo / Taller CRC</option>
-            <option value="ROLE_ADMIN">Administrador de Plataforma y Seguridad</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">SEDE / CENTRO OPERATIVO</label>
-          <select 
-            v-model="sede"
-            class="w-full bg-[#1F2937] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#FFCD11] transition cursor-pointer">
-            <option value="Centro de Reparación de Componentes Arequipa - La Joya">Sede Arequipa - Taller CRC La Joya</option>
-            <option value="Mina Cerro Verde - Taller Bahía 3">Mina Cerro Verde (Arequipa)</option>
-            <option value="Mina Las Bambas - Taller Chalcobamba">Mina Las Bambas (Apurímac)</option>
-            <option value="Mina Cuajone - Bahía de Mantenimiento Botiflaca">Mina Cuajone (Moquegua)</option>
-          </select>
-        </div>
-
         <button 
           type="submit" 
           :disabled="cargando"
@@ -107,8 +82,6 @@ const authStore = useAuthStore()
 
 const username = ref('')
 const password = ref('')
-const rol = ref('')
-const sede = ref('Centro de Reparación de Componentes Arequipa - La Joya')
 const cargando = ref(false)
 const errorMsg = ref('')
 
@@ -121,9 +94,7 @@ const handleLogin = async () => {
   cargando.value = true
   errorMsg.value = ''
   try {
-    authStore.cambiarSede(sede.value)
-    // El rol oficial se valida directamente desde la base de datos
-    await authStore.login(username.value.trim(), password.value, rol.value || null)
+    await authStore.login(username.value.trim(), password.value)
     router.push('/dashboard')
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
